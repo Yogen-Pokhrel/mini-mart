@@ -1,5 +1,6 @@
 package com.minimart.product.entity;
 
+import com.minimart.brand.entity.Brand;
 import com.minimart.category.entity.ProductCategory;
 import com.minimart.user.entity.User;
 import jakarta.persistence.*;
@@ -22,9 +23,17 @@ public class Product {
     private int price;
     private int stock;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.ORDINAL)
+    private ProductStatus status;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private ProductCategory category;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "seller_id")

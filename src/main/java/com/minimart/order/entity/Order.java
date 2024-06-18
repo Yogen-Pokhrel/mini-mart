@@ -1,6 +1,7 @@
 package com.minimart.order.entity;
 
 import com.minimart.common.BaseEntity;
+import com.minimart.common.RecordType;
 import com.minimart.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -37,6 +38,10 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
 
-    @OneToMany(mappedBy = "orderId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    @Enumerated(EnumType.ORDINAL)
+    private OrderStatus status;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 }
