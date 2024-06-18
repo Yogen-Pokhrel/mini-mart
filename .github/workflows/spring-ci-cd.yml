@@ -48,7 +48,7 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      - name: Verify Maven build artifacts in backend/Minimart-API-System
+      - name: Verify Maven build artifacts
         run: |
           echo "Listing contents of target/"
           ls -l target/
@@ -68,7 +68,7 @@ jobs:
 
       - name: List build artifacts
         if: github.event_name == 'push'
-        run: tree backend/Minimart-API-System
+        run: tree .
 
       - name: Build Docker Image
         if: github.event_name == 'push'
