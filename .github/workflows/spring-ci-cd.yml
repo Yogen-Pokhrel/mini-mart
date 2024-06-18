@@ -24,6 +24,7 @@ jobs:
 
       - name: Setup enviornment variables
         run: |
+          echo "JDBC_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
           touch src/main/resources/.env
           echo "JDBC_URL=${{ secrets.DATABASE_URL }}" >> src/main/resources/.env
           echo "SPRING_DATASOURCE_URL=${{ secrets.DATABASE_URL }}" >> src/main/resources/.env
