@@ -3,8 +3,7 @@ name: Spring Boot CI/CD Pipeline
 on: [push, pull_request]
 
 jobs:
-  build-and-test:
-    environment: deploy
+  test:
     runs-on: ubuntu-latest
 
     services:
@@ -13,21 +12,13 @@ jobs:
         env:
           POSTGRES_DB: minimart
           POSTGRES_USER: yogen
-          POSTGRES_PASSWORD: dat@123  # Consider using secrets management for passwords
+          POSTGRES_PASSWORD: dat@123
         ports:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=5
 
-
     steps:
       - uses: actions/checkout@v2
-
-      - name: Setup enviornment variables
-        run: |
-          echo "JDBC_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
-          touch src/main/resources/.env
-          echo "JDBC_URL=${{ secrets.DATABASE_URL }}" >> src/main/resources/.env
-          echo "SPRING_DATASOURCE_URL=${{ secrets.DATABASE_URL }}" >> src/main/resources/.env
 
       - name: Set up JDK 21
         uses: actions/setup-java@v2
@@ -49,10 +40,9 @@ jobs:
         run: |
           mvn clean package
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JDBC_URL: jdbc:postgresql://localhost:5432/minimart
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/minimart
 
-
-      
       - name: Verify Maven build artifacts
         run: |
           echo "Listing contents of target/"
@@ -60,8 +50,34 @@ jobs:
           echo "Verifying JAR file presence"
           ls -l target/*.jar
 
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/org/example
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      - name: Build with Maven
+        run: mvn clean package
+
       - name: Heroku Container Registry Login
-        if: github.event_name == 'push'
         run: echo "${{ secrets.HEROKU_API_KEY }}" | docker login --username=_ --password-stdin registry.heroku.com
 
       - name: Install tree
@@ -72,24 +88,18 @@ jobs:
           cp target/*.jar .
 
       - name: List build artifacts
-        if: github.event_name == 'push'
         run: tree .
 
       - name: Build Docker Image
-        if: github.event_name == 'push'
         run: docker build -t my-app -f Dockerfile .
 
       - name: Tag Image
-        if: github.event_name == 'push'
         run: docker tag my-app registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
 
       - name: Push to Heroku
-        if: github.event_name == 'push'
         run: docker push registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
 
       - name: Release Image on Heroku
-        if: github.event_name == 'push'
         run: heroku container:release web --app ${{ secrets.HEROKU_APP_NAME }}
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
