@@ -25,7 +25,7 @@ jobs:
       - name: Setup enviornment variables
         run: |
           touch src/main/resources/.env
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> src/main/resources/.env
+          echo "JDBC_URL=${{ secrets.DATABASE_URL }}" >> src/main/resources/.env
           echo "SPRING_DATASOURCE_URL=${{ secrets.DATABASE_URL }}" >> src/main/resources/.env
 
       - name: Set up JDK 21
