@@ -50,8 +50,7 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+
       
       - name: Verify Maven build artifacts
         run: |
