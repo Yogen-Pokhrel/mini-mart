@@ -1,5 +1,6 @@
 package com.minimart.productattribute.entity;
 
+import com.minimart.common.RecordType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,11 @@ public class ProductAttribute {
     private int id;
 
     private String name;
-    private String type;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.ORDINAL)
+    private RecordType type;
+
     private String unit;
 
     @OneToMany(mappedBy = "productAttribute", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

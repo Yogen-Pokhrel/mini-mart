@@ -1,6 +1,8 @@
 package com.minimart.user.entity;
 
+import com.minimart.address.entity.Address;
 import com.minimart.common.BaseEntity;
+import com.minimart.order.entity.Order;
 import com.minimart.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -18,9 +20,24 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(unique = true, nullable = false)
     private String firstName;
     private String lastName;
 
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+    private String phone;
+    private String image;
+
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> addresses = new ArrayList<>();
 }

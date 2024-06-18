@@ -1,5 +1,6 @@
 package com.minimart.order.entity;
 
+import com.minimart.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +15,15 @@ public class OrderLineItem {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
-    private Order orderId;
+    private Order order;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     private int quantity;
-    private double unitPrice;
-
-
+    private float unitPrice;
+    private float taxAmount;
+    private float totalPrice;
 
 }
