@@ -40,8 +40,8 @@ jobs:
         run: |
           mvn clean package
         env:
-          JDBC_URL: jdbc:postgresql://localhost:5432/minimart
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/minimart
+          JDBC_URL: jdbc:postgresql://localhost:5432/minimart?user=yogen&password=dat@123
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/minimart?user=yogen&password=dat@123
 
       - name: Verify Maven build artifacts
         run: |
