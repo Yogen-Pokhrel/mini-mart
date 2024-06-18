@@ -44,7 +44,6 @@ jobs:
 
       - name: Build and test with Maven
         run: |
-          cd backend/Minimart-API-System
           mvn clean package
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -65,7 +64,7 @@ jobs:
 
       - name: Copy jar
         run: |
-          cd backend/Minimart-API-System && cp target/*.jar .
+          cp target/*.jar .
 
       - name: List build artifacts
         if: github.event_name == 'push'
@@ -73,7 +72,7 @@ jobs:
 
       - name: Build Docker Image
         if: github.event_name == 'push'
-        run: cd backend/Minimart-API-System && docker build -t my-app -f Dockerfile .
+        run: docker build -t my-app -f Dockerfile .
 
       - name: Tag Image
         if: github.event_name == 'push'
