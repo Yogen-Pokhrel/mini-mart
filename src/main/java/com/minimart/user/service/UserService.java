@@ -1,16 +1,17 @@
 package com.minimart.user.service;
 
+import com.minimart.common.dto.PaginationDto;
+import com.minimart.user.dto.request.CreateUserDto;
+import com.minimart.user.dto.response.UserDetailDto;
+import com.minimart.user.dto.response.UserListDto;
 import com.minimart.user.entity.User;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 public interface UserService {
-    Page<User> findAll(Pageable pageable);
-    User findById(int id);
-    User findByEmail(String email);
-    void save(User user);
+    Page<UserDetailDto> findAll(PaginationDto paginationDto);
+    UserDetailDto findById(int id) throws Exception;
+    UserDetailDto findByEmail(String email);
+    UserDetailDto save(CreateUserDto createDto);
     void update(int userId, User user);
     void delete(int id);
 }

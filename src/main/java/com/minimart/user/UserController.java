@@ -1,15 +1,16 @@
 package com.minimart.user;
 
 import com.minimart.common.ApiResponse;
+import com.minimart.common.exception.DuplicateResourceException;
 import com.minimart.common.ResponseMeta;
-import com.minimart.user.dto.CreateUserDto;
+import com.minimart.common.dto.PaginationDto;
+import com.minimart.user.dto.request.CreateUserDto;
+import com.minimart.user.dto.response.UserDetailDto;
 import com.minimart.user.entity.User;
 import com.minimart.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,28 +22,27 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ApiResponse<List<User>>  findAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<User> usersPage = userService.findAll(pageable);
+    public ApiResponse<List<UserDetailDto>>  findAll(PaginationDto paginationDto) {
+        Page<UserDetailDto> userPaginated = userService.findAll(paginationDto);
         return ApiResponse.success(
-                usersPage.getContent(),
-                "true",
+                userPaginated.getContent(),
+                "Users fetched successfully",
                 new ResponseMeta(
-                        usersPage.getNumber(),
-                        usersPage.getSize(),
-                        usersPage.getTotalElements(),
-                        usersPage.getTotalPages())
+                        userPaginated.getNumber(),
+                        userPaginated.getSize(),
+                        userPaginated.getTotalElements(),
+                        userPaginated.getTotalPages())
         );
     }
 
     @PostMapping
-    public ApiResponse<String> createUser(@Valid @RequestBody CreateUserDto createDto) {
-        System.out.println(createDto);
-        return ApiResponse.success("Hello World!", "true", new ResponseMeta(10,10,10,10));
+    public ApiResponse<UserDetailDto> createUser(@Valid @RequestBody CreateUserDto createDto) throws Exception {
+        UserDetailDto existingUser = userService.findByEmail(createDto.getEmail());
+        if(existingUser != null) {
+            throw new DuplicateResourceException("User already exists");
+        }
+        UserDetailDto newUser = userService.save(createDto);
+        return ApiResponse.success(newUser, "User created successfully");
     }
 
     @DeleteMapping("/{id}")

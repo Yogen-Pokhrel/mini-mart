@@ -1,4 +1,4 @@
-package com.minimart.user.dto;
+package com.minimart.user.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +25,6 @@ public class CreateUserDto {
     private String phone;
 
     @NotBlank(message = "Password is mandatory")
-    @Email(message = "Email should be valid")
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 }

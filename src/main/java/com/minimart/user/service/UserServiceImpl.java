@@ -1,42 +1,53 @@
 package com.minimart.user.service;
 
+import com.minimart.common.dto.PaginationDto;
+import com.minimart.common.exception.NoResourceFoundException;
+import com.minimart.user.dto.request.CreateUserDto;
+import com.minimart.user.dto.response.UserDetailDto;
 import com.minimart.user.entity.User;
 import com.minimart.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Override
-    public Page<User> findAll(Pageable pageable) {
-        long totalUsers = userRepository.count();
-
-        return userRepository.findAll(pageable);
+    public Page<UserDetailDto> findAll(PaginationDto paginationDto) {
+        Pageable pageable = PageRequest.of(paginationDto.getPage(), paginationDto.getSize());
+        Page<User> paginatedUser = userRepository.findAll(pageable);
+        return paginatedUser.map(user -> modelMapper.map(user, UserDetailDto.class));
     }
 
     @Override
-    public User findById(int id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
+    public UserDetailDto findById(int id) throws Exception {
+        User user = userRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No User Exists with provided"));
+        return modelMapper.map(user, UserDetailDto.class);
     }
 
     @Override
-    public User findByEmail(String email) {
-        Optional<User> user = userRepository.findUserByEmail(email);
-        return user.orElse(null);
+    public UserDetailDto findByEmail(String email) {
+        User user = userRepository.findUserByEmail(email).orElse(null);
+        if(user == null) {return null;}
+        return modelMapper.map(user, UserDetailDto.class);
     }
 
     @Override
-    public void save(User user) {
-        userRepository.save(user);
+    public UserDetailDto save(CreateUserDto createDto) {
+        String hashedPassword =new BCryptPasswordEncoder().encode(createDto.getPassword());
+        createDto.setPassword(hashedPassword);
+        User newUser = userRepository.save(modelMapper.map(createDto, User.class));
+        return modelMapper.map(newUser, UserDetailDto.class);
     }
 
     @Override
