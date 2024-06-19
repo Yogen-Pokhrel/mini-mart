@@ -2,7 +2,7 @@ package com.minimart.role;
 
 import com.minimart.common.ApiResponse;
 import com.minimart.role.dto.CreateRoleDto;
-import com.minimart.role.dto.RoleDto;
+import com.minimart.role.dto.RoleResponseDto;
 import com.minimart.role.dto.UpdateRoleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,26 +19,26 @@ public class RoleController {
     RoleService roleService;
 
     @GetMapping
-    private ApiResponse<List<RoleDto>> findAll(){
-        List<RoleDto> roles = roleService.findAll();
+    private ApiResponse<List<RoleResponseDto>> findAll(){
+        List<RoleResponseDto> roles = roleService.findAll();
         return ApiResponse.success(roles, "Roles fetched successfully");
     }
 
     @GetMapping("/{id}")
-    private ApiResponse<RoleDto> findById(@PathVariable int id) throws Exception{
-        RoleDto roles = roleService.findById(id);
+    private ApiResponse<RoleResponseDto> findById(@PathVariable int id) throws Exception{
+        RoleResponseDto roles = roleService.findById(id);
         return ApiResponse.success(roles, "Role fetched successfully");
     }
 
     @PostMapping
-    private ApiResponse<RoleDto> create(@RequestBody CreateRoleDto createRoleDto) throws Exception{
-        RoleDto newRole = roleService.save(createRoleDto);
+    private ApiResponse<RoleResponseDto> create(@RequestBody CreateRoleDto createRoleDto) throws Exception{
+        RoleResponseDto newRole = roleService.save(createRoleDto);
         return ApiResponse.success(newRole, "Role created successfully");
     }
 
     @PutMapping("/{id}")
-    private ApiResponse<RoleDto> update(@PathVariable int id, @RequestBody UpdateRoleDto updateRoleDto) throws Exception{
-        RoleDto newRole = roleService.update(id, updateRoleDto);
+    private ApiResponse<RoleResponseDto> update(@PathVariable int id, @RequestBody UpdateRoleDto updateRoleDto) throws Exception{
+        RoleResponseDto newRole = roleService.update(id, updateRoleDto);
         return ApiResponse.success(newRole, "Role updated successfully");
     }
 

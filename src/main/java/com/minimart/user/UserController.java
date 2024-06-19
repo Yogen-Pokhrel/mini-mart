@@ -6,7 +6,6 @@ import com.minimart.common.ResponseMeta;
 import com.minimart.common.dto.PaginationDto;
 import com.minimart.user.dto.request.CreateUserDto;
 import com.minimart.user.dto.response.UserDetailDto;
-import com.minimart.user.entity.User;
 import com.minimart.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
