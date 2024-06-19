@@ -1,0 +1,73 @@
+version: "3.8"
+
+services:
+  keycloak_db:
+    image: postgres
+    volumes:
+      - ./postgres_keycloak:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "keycloak"
+      POSTGRES_USER: "keycloak"
+      POSTGRES_PASSWORD: "password"
+    ports:
+      - 5432:5432
+    networks:
+      - keycloak-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    build:
+      context: ./src/main/java/com/minimart/auth/keycloak/config/
+      dockerfile: Keycloak.Dockerfile
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4000/health/ready"]
+      interval: 15s
+      timeout: 2s
+      retries: 10
+    command: ["start-dev", "--http-port=4000", "--import-realm"]
+    ports:
+      - 4001:4000
+    depends_on:
+      keycloak_db:
+        condition: service_healthy
+    networks:
+      - keycloak-network
+
+  postgres:
+    container_name: postgres-spring-data
+    image: postgres:latest  # It's better to specify the tag, e.g., postgres:13
+    environment:
+      POSTGRES_USER: yogen
+      POSTGRES_PASSWORD: dat@123
+      POSTGRES_DB: minimart
+      PGDATA: /data/postgres  # Directory for PostgreSQL data
+    volumes:
+      - postgres_data:/data/postgres  # More descriptive volume name
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin-spring-data
+    image: dpage/pgadmin4:latest  # It's better to specify the tag, e.g., dpage/pgadmin4:5.5
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'  # Allow access without logging in
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin  # More descriptive volume name
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+
+volumes:
+  postgres_keycloak:
+    driver: local
+
+networks:
+  keycloak-network:
+    driver: bridge
