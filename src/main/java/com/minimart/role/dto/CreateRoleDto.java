@@ -17,4 +17,6 @@ public class CreateRoleDto {
     @NotBlank(message = "Slug is mandatory")
     @Size(min = 1, max = 50, message = "Slug must be between 1 and 50 characters")
     private String slug;
+
+    private int description;
 }
