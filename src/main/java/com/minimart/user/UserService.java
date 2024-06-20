@@ -1,5 +1,7 @@
 package com.minimart.user;
 
+import com.minimart.address.dto.request.CreateAddressDto;
+import com.minimart.address.entity.Address;
 import com.minimart.common.CommonService;
 import com.minimart.common.dto.PaginationDto;
 import com.minimart.common.exception.NoResourceFoundException;
@@ -103,4 +105,10 @@ public class UserService implements CommonService<CreateUserDto, UpdateUserDto, 
     public void delete(Integer id) {
         userRepository.deleteById(id);
     }
+
+    /*public Page<UserDetailDto> findAllDeletedUsers(PaginationDto paginationDto) {
+        Pageable pageable = PageRequest.of(paginationDto.getPage(), paginationDto.getSize());
+        Page<User> paginatedUser = userRepository.findAllByDeletedTrue(pageable);
+        return paginatedUser.map(user -> modelMapper.map(user, UserDetailDto.class));
+    }*/
 }
