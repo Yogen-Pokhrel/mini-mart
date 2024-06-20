@@ -7,8 +7,6 @@ import com.minimart.brand.entity.Brand;
 import com.minimart.common.CommonService;
 import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.helpers.ListMapper;
-import com.minimart.role.dto.RoleResponseDto;
-import com.minimart.role.entity.Role;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
