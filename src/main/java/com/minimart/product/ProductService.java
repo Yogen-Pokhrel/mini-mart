@@ -5,11 +5,13 @@ import com.minimart.brand.entity.Brand;
 import com.minimart.category.CategoryRepository;
 import com.minimart.category.entity.ProductCategory;
 import com.minimart.common.CommonService;
+import com.minimart.common.dto.PaginationDto;
 import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.helpers.ListMapper;
 import com.minimart.product.dto.request.CreateProductDto;
 import com.minimart.product.dto.request.CreateProductReviewDto;
 import com.minimart.product.dto.request.UpdateProductDto;
+import com.minimart.product.dto.response.ProductDetailResponseDto;
 import com.minimart.product.dto.response.ProductImageResponseDto;
 import com.minimart.product.dto.response.ProductResponseDto;
 import com.minimart.product.dto.response.ReviewResponseDto;
@@ -22,10 +24,14 @@ import com.minimart.product.repository.ProductRepository;
 import com.minimart.product.repository.ProductReviewRepository;
 import com.minimart.role.dto.RoleResponseDto;
 import com.minimart.role.entity.Role;
+import com.minimart.user.dto.response.UserDetailDto;
 import com.minimart.user.entity.User;
 import com.minimart.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -64,6 +70,14 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
         return (List<ProductResponseDto>) listMapper.mapList(productRepository.findAll(),new ProductResponseDto());
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public Page<ProductResponseDto> findAll(PaginationDto paginationDto) {
+        Pageable pageable = PageRequest.of(paginationDto.getPage(), paginationDto.getSize());
+        Page<Product> paginatedUser = productRepository.findAll(pageable);
+        return paginatedUser.map(user -> modelMapper.map(user, ProductResponseDto.class));
+    }
+
     @SuppressWarnings("unchecked")
     public List<ReviewResponseDto> findAllProductReviews(int productId) {
         return (List<ReviewResponseDto>) listMapper.mapList(productReviewRepository.findAllByProductId(productId),new ReviewResponseDto());
@@ -73,6 +87,11 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
     public ProductResponseDto findById(Integer id) throws Exception {
         Product recordData = productRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No product found with provided id"));
         return modelMapper.map(recordData, ProductResponseDto.class);
+    }
+
+    public ProductDetailResponseDto findBySlug(String slug) throws Exception {
+        Product recordData = productRepository.findBySlug(slug).orElseThrow(() -> new NoResourceFoundException("No product found with provided id"));
+        return modelMapper.map(recordData, ProductDetailResponseDto.class);
     }
 
     @Override
