@@ -25,6 +25,9 @@ public class CategoryService implements CommonService<CreateCategoryDto, UpdateC
     private CategoryRepository categoryRepository;
 
     @Autowired
+    private ProductAttributeRepository productAttributeRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -75,10 +78,10 @@ public class CategoryService implements CommonService<CreateCategoryDto, UpdateC
         categoryRepository.deleteById(id);
     }
 
-    public void assignAttributes(Integer id, Integer[] attributeIds) throws Exception{
-//        ProductCategory recordData = categoryRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No Category found with provided id"));
-//        List<ProductAttribute> attributeData = productAttributeRepository.findAllByIds(attributeIds);
-
-
+    public void assignAttributes(Integer id, List<Integer> attributeIds) throws Exception{
+        ProductCategory recordData = categoryRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No Category found with provided id"));
+        List<ProductAttribute> attributeData = productAttributeRepository.findAllByIds(attributeIds);
+        recordData.setAttributes(attributeData);
+        categoryRepository.save(recordData);
     }
 }

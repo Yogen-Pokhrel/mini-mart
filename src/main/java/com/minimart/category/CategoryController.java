@@ -53,10 +53,11 @@ public class CategoryController {
         return ApiResponse.success(null, "Category deleted successfully");
     }
 
-//    @PutMapping("/{id}")
-//    private ApiResponse<CategoryResponseDto> assignAttributes(@PathVariable int id,@Valid @RequestBody AssignAttributesDto assignAttributesDto) throws Exception{
-//        categoryService.assignAttributes(id, assignAttributesDto.getAttributeIds());
-//        return ApiResponse.success(null, "Category updated successfully");
-//    }
+    @PutMapping("/{id}/assign-attributes")
+    private ApiResponse<CategoryResponseDto> assignAttributes(@PathVariable int id,@Valid @RequestBody AssignAttributesDto assignAttributesDto) throws Exception{
+        categoryService.assignAttributes(id, assignAttributesDto.getAttributeIds());
+        CategoryResponseDto updatedCategory = categoryService.findById(id);
+        return ApiResponse.success(updatedCategory, "Attributes assigned successfully");
+    }
 
 }
