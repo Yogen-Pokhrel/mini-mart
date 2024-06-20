@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
         if(ex instanceof ClientRequestException clientRequestException){
             return ResponseEntity.status(clientRequestException.getStatusCode()).body(ApiResponse.error(clientRequestException.getMessage()));
         }
-        String errorMessage = "Database error occurred: " + ex.getMessage();
+        String errorMessage = "Error: " + ex.getMessage();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(errorMessage));
 
     }
