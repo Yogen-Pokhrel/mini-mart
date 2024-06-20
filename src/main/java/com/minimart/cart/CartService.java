@@ -85,4 +85,19 @@ public class CartService {
         }
         return modelMapper.map(cart, CartResponseDto.class);
     }
+
+    @Transactional
+    public CartResponseDto clearCart(int userId) throws Exception {
+        Cart cart = cartRepository.findByUserId(userId).orElse(null);
+        if(cart == null) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new NoResourceFoundException("No user found"));
+            cart = assignCart(user);
+        }
+        cartItemRepository.deleteAll(cart.getItems());
+        cart.getItems().clear();
+        cart.setTotalPrice(0);
+
+        cart = cartRepository.save(cart);
+        return modelMapper.map(cart, CartResponseDto.class);
+    }
 }
