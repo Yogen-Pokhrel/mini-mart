@@ -1,5 +1,6 @@
 package com.minimart.role.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.minimart.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class Role {
     private String title;
     private String slug;
 
-
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<User> users = new ArrayList<>();
 }
