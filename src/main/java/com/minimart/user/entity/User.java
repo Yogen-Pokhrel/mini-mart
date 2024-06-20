@@ -54,4 +54,6 @@ public class User extends BaseEntity {
         this.roles.add(role);
         role.getUsers().add(this);
     }
+
+//    private boolean deleted = false;
 }
