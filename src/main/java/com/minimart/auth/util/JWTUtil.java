@@ -2,14 +2,15 @@ package com.minimart.auth.util;
 
 import com.minimart.auth.AuthDetails;
 import com.minimart.auth.AuthService;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.minimart.common.exception.JWTClaimException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.security.SignatureException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import io.jsonwebtoken.*;
 
 @Component
 public class JWTUtil {
@@ -23,7 +24,10 @@ public class JWTUtil {
 
     public String generateToken(AuthDetails details) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", details.getAuthorities());
+        List<String> roleNames = details.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .toList();
+        claims.put("roles", roleNames);
         return this.generateAccessTokens(claims, details.getUsername());
     }
 
@@ -47,26 +51,15 @@ public class JWTUtil {
                 .getSubject();
     }
 
-    public boolean isTokenValid(String token) {
+    public boolean isTokenValid(String token) throws Exception{
         try {
             Jwts.parser()
                     .setSigningKey(secret)
                     .parseClaimsJws(token);
             return true;
-        } catch (SignatureException e) {
-            System.out.println(e.getMessage());
-        } catch (MalformedJwtException e) {
-            System.out.println(e.getMessage());
-        } catch (ExpiredJwtException e) {
-            System.out.println(e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            System.out.println(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+        } catch (JwtException e) {
+            throw new JWTClaimException(e.getMessage());
         }
-        return false;
     }
-
-
 }
 

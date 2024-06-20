@@ -2,6 +2,7 @@ package com.minimart.auth.filter;
 
 import com.minimart.auth.AuthService;
 import com.minimart.auth.util.JWTUtil;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,13 +37,17 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, JwtException {
         String token = extractTokenFromRequest(request);
-        if (token != null && jwtUtil.isTokenValid(token)) {
-            var authDetails = this.authService.loadUserByUsername(jwtUtil.getSubject(token));
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(authDetails, null, authDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            if (token != null && jwtUtil.isTokenValid(token)) {
+                var authDetails = this.authService.loadUserByUsername(jwtUtil.getSubject(token));
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(authDetails, null, authDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         filterChain.doFilter(request, response);

@@ -1,7 +1,5 @@
 package com.minimart.user.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.minimart.helpers.validators.ValidEnum;
 import com.minimart.user.dto.RegistrationType;
 import jakarta.validation.constraints.Email;

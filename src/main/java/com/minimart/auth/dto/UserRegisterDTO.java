@@ -2,16 +2,22 @@ package com.minimart.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.minimart.common.validation.ValidPassword;
+import com.minimart.helpers.validators.ValidEnum;
+import com.minimart.user.dto.RegistrationType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserRegisterDTO {
-    @NotBlank(message = "name is mandatory")
-    @Size(min = 2, max = 50, message = "name must be between 2 and 50 characters")
-    private String name;
+    @NotBlank(message = "First name is mandatory")
+    @Size(min = 1, max = 50, message = "First name must be between 1 and 50 characters")
+    private String firstName;
+
+    @Size(max = 50, message = "Last name must be less than or equal to 50 characters")
+    private String lastName;
 
     @NotBlank(message = "email is mandatory")
     @Email(message = "email should be valid")
@@ -21,58 +27,7 @@ public class UserRegisterDTO {
     @ValidPassword
     private String password;
 
-    @Pattern(regexp = "USER|ADMIN")
-    private String role;
-
-    public UserRegisterDTO() {
-    }
-
-    public UserRegisterDTO(String name, String email, String password, String role) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    @Override
-    public String toString() {
-        return "UserRegisterDTO{" +
-                "name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
-                '}';
-    }
+    @NotBlank(message = "Role type is mandatory")
+    @ValidEnum(enumClass = RegistrationType.class, message = "Invalid registration type")
+    private String registrationType;
 }

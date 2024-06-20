@@ -1,8 +1,10 @@
 package com.minimart.user.dto.response;
 
+import com.minimart.role.entity.Role;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class UserDetailDto {
@@ -14,4 +16,5 @@ public class UserDetailDto {
     private String phone;
     private LocalDate addedOn;
     private SimpleUserDto addedBy;
+    private List<Role> roles;
 }
