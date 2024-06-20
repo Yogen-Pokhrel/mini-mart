@@ -123,3 +123,7 @@ jobs:
         run: heroku container:release web --app ${{ secrets.HEROKU_APP_NAME }}
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          s3_accessKey: ${{ secrets.S3_ACCESSKEY }}
+          s3_region: ${{ secrets.S3_REGION }}
+          s3_bucketName: ${{ secrets.S3_BUCKETNAME }}
+          s3_secretKey: ${{ secrets.S3_SECRETKEY }}
