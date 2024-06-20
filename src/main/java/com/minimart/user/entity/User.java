@@ -1,6 +1,7 @@
 package com.minimart.user.entity;
 
 import com.minimart.address.entity.Address;
+import com.minimart.cart.entity.Cart;
 import com.minimart.common.BaseEntity;
 import com.minimart.order.entity.Order;
 import com.minimart.product.entity.Product;
@@ -54,4 +55,7 @@ public class User extends BaseEntity {
         this.roles.add(role);
         role.getUsers().add(this);
     }
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Cart cart;
 }

@@ -17,4 +17,5 @@ public class UserDetailDto {
     private LocalDate addedOn;
     private SimpleUserDto addedBy;
     private List<Role> roles;
+//    private boolean deleted;
 }

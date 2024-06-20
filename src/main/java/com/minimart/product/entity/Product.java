@@ -1,6 +1,7 @@
 package com.minimart.product.entity;
 
 import com.minimart.brand.entity.Brand;
+import com.minimart.cart.entity.CartItem;
 import com.minimart.category.entity.ProductCategory;
 import com.minimart.user.entity.User;
 import jakarta.persistence.*;
@@ -19,8 +20,9 @@ public class Product {
     private int id;
 
     private String title;
+    private String slug;
     private String description;
-    private int price;
+    private float price;
     private int stock;
 
     @Column(nullable = false)
@@ -41,4 +43,10 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductData> productData = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductImage> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductReview> reviews = new ArrayList<>();
 }

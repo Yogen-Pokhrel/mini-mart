@@ -1,5 +1,6 @@
 package com.minimart.category.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.minimart.category.entity.ProductCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -22,5 +23,7 @@ public class CreateCategoryDto {
 
     @Positive(message = "Parent category Id should be positive integer")
     private Integer parentCategoryId;
+
+    @JsonIgnore
     private ProductCategory parent;
 }
