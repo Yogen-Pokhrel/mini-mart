@@ -3,6 +3,7 @@ package com.minimart.category.entity;
 
 import com.minimart.product.entity.Product;
 import com.minimart.productattribute.entity.ProductAttribute;
+import com.minimart.role.entity.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,6 @@ public class ProductCategory {
     private String title;
     private String slug;
     private String description;
-    private String image;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
@@ -41,5 +41,14 @@ public class ProductCategory {
     )
     private List<ProductAttribute> attributes = new ArrayList<>();
 
+    public void setParent(ProductCategory category) {
+        if (this.parent != null) {
+            this.parent.children.remove(this); // Remove from current parent's children
+        }
+        this.parent = category;
+        if (category != null) {
+            category.children.add(this); // Add to new parent's children
+        }
+    }
 
 }

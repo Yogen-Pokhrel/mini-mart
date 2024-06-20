@@ -19,7 +19,7 @@ public class ProductAttribute {
     private String name;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private RecordType type;
 
     private String unit;
