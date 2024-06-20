@@ -12,4 +12,5 @@ public class UserListDto {
     private String phone;
     private String image;
     private LocalDate addedOn;
+//    private  boolean deleted;
 }
