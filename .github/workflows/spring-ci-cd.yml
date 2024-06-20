@@ -92,7 +92,6 @@ jobs:
         run: mvn clean package
         env:
           JDBC_URL: ${{ secrets.DATABASE_URL }}
-          SPRING_DATASOURCE_URL: ${{ secrets.DATABASE_URL }}
           s3_accessKey: ${{ secrets.S3_ACCESSKEY }}
           s3_region: ${{ secrets.S3_REGION }}
           s3_bucketName: ${{ secrets.S3_BUCKETNAME }}
