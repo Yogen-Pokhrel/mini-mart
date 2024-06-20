@@ -32,4 +32,10 @@ public class CartController {
         CartResponseDto updatedCart = cartService.removeItemFromCart(userId, cartItemId);
         return ApiResponse.success(updatedCart, "Item removed from cart successfully");
     }
+
+    @DeleteMapping("/{userId}/items")
+    public ApiResponse<CartResponseDto> clearCart(@PathVariable int userId) throws Exception{
+        CartResponseDto updatedCart = cartService.clearCart(userId);
+        return ApiResponse.success(updatedCart, "Cart cleared successfully");
+    }
 }
