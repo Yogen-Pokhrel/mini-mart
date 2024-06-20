@@ -61,9 +61,11 @@ jobs:
       - name: Setup enviornment variables
         run: |
           echo "JDBC_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
-          touch src/main/resources/.env
-          echo "JDBC_URL=${{ secrets.DATABASE_URL }}" >> src/main/resources/.env
-          echo "SPRING_DATASOURCE_URL=${{ secrets.DATABASE_URL }}" >> src/main/resources/.env
+          echo "s3_accessKey=${{ secrets.S3_ACCESSKEY }}" >> $GITHUB_ENV
+          echo "s3_region=${{ secrets.S3_REGION }}" >> $GITHUB_ENV
+          echo "s3_bucketName=${{ secrets.S3_BUCKETNAME }}" >> $GITHUB_ENV
+          echo "s3_secretKey=${{ secrets.S3_SECRETKEY }}" >> $GITHUB_ENV
+
 
       - name: Set up JDK 21
         uses: actions/setup-java@v2
