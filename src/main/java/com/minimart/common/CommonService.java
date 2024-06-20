@@ -1,7 +1,5 @@
 package com.minimart.common;
 
-import com.minimart.address.dto.request.CreateAddressDto;
-import com.minimart.address.entity.Address;
 import com.minimart.common.dto.PaginationDto;
 import org.springframework.data.domain.Page;
 

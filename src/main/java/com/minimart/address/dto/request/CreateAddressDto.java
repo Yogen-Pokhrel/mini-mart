@@ -2,6 +2,7 @@ package com.minimart.address.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
@@ -21,6 +22,6 @@ public class CreateAddressDto {
     @NotBlank(message = "Country is mandatory")
     private String country;
 
-    @NotBlank(message = "User id is mandatory")
+    @Positive(message = "Please provide user id")
     private int userId;
 }

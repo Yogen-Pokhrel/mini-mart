@@ -8,7 +8,6 @@ import com.minimart.helpers.FileUploaderService;
 import com.minimart.user.dto.request.CreateUserDto;
 import com.minimart.user.dto.request.UpdateUserDto;
 import com.minimart.user.dto.response.UserDetailDto;
-import com.minimart.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

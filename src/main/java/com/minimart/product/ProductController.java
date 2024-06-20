@@ -5,10 +5,12 @@ import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.helpers.FileUploaderService;
 import com.minimart.helpers.Utilities;
 import com.minimart.product.dto.request.CreateProductDto;
+import com.minimart.product.dto.request.CreateProductReviewDto;
 import com.minimart.product.dto.request.UpdateProductDto;
 import com.minimart.product.dto.request.UploadProductImagesDto;
 import com.minimart.product.dto.response.ProductImageResponseDto;
 import com.minimart.product.dto.response.ProductResponseDto;
+import com.minimart.product.dto.response.ReviewResponseDto;
 import com.minimart.product.entity.ProductImage;
 import com.minimart.user.dto.request.CreateUserDto;
 import jakarta.validation.Valid;
@@ -43,6 +45,12 @@ public class ProductController {
         return ApiResponse.success(product , "Product fetched successfully");
     }
 
+    @GetMapping("/{id}/reviews")
+    private ApiResponse<List<ReviewResponseDto>> findProductReviews(@PathVariable int id) throws Exception{
+        List<ReviewResponseDto> reviews  = productService.findAllProductReviews(id);
+        return ApiResponse.success(reviews , "Product fetched successfully");
+    }
+
     @PostMapping
     private ApiResponse<ProductResponseDto> create(@Valid @RequestBody CreateProductDto createDto) throws Exception{
         createDto.setSlug(Utilities.slugify(createDto.getSlug(), "-"));
@@ -70,6 +78,12 @@ public class ProductController {
         return ApiResponse.success(uploadedProductImages, "Category created successfully");
     }
 
+    @PostMapping("/reviews")
+    private ApiResponse<ReviewResponseDto> addReviews(@Valid @RequestBody CreateProductReviewDto createDto) throws Exception{
+        ReviewResponseDto newRecord = productService.addReview(createDto);
+        return ApiResponse.success(newRecord, "Review added successfully");
+    }
+
     @PutMapping("/{id}")
     private ApiResponse<ProductResponseDto> update(@PathVariable int id,@Valid @RequestBody UpdateProductDto updateDto) throws Exception{
         ProductResponseDto newCategory = productService.update(id, updateDto);
@@ -80,5 +94,11 @@ public class ProductController {
     private ApiResponse<?> delete(@PathVariable int id) throws Exception{
         productService.delete(id);
         return ApiResponse.success(null, "Product deleted successfully");
+    }
+
+    @DeleteMapping("/{id}/review")
+    private ApiResponse<?> deleteReview(@PathVariable int id) throws Exception{
+        productService.deleteReview(id);
+        return ApiResponse.success(null, "Product review deleted successfully");
     }
 }

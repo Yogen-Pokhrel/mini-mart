@@ -8,14 +8,20 @@ import com.minimart.common.CommonService;
 import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.helpers.ListMapper;
 import com.minimart.product.dto.request.CreateProductDto;
+import com.minimart.product.dto.request.CreateProductReviewDto;
 import com.minimart.product.dto.request.UpdateProductDto;
 import com.minimart.product.dto.response.ProductImageResponseDto;
 import com.minimart.product.dto.response.ProductResponseDto;
+import com.minimart.product.dto.response.ReviewResponseDto;
 import com.minimart.product.entity.Product;
 import com.minimart.product.entity.ProductImage;
+import com.minimart.product.entity.ProductReview;
 import com.minimart.product.entity.ProductStatus;
 import com.minimart.product.repository.ProductImageRepository;
 import com.minimart.product.repository.ProductRepository;
+import com.minimart.product.repository.ProductReviewRepository;
+import com.minimart.role.dto.RoleResponseDto;
+import com.minimart.role.entity.Role;
 import com.minimart.user.entity.User;
 import com.minimart.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -33,6 +39,9 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
 
     @Autowired
     private ProductImageRepository productImageRepository;
+
+    @Autowired
+    private ProductReviewRepository productReviewRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -53,6 +62,11 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
     @SuppressWarnings("unchecked")
     public List<ProductResponseDto> findAll() {
         return (List<ProductResponseDto>) listMapper.mapList(productRepository.findAll(),new ProductResponseDto());
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ReviewResponseDto> findAllProductReviews(int productId) {
+        return (List<ReviewResponseDto>) listMapper.mapList(productReviewRepository.findAllByProductId(productId),new ReviewResponseDto());
     }
 
     @Override
@@ -90,6 +104,11 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
         productRepository.deleteById(id);
     }
 
+    public void deleteReview(Integer id) throws Exception {
+        productReviewRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No product review found with provided id"));
+        productReviewRepository.deleteById(id);
+    }
+
     public List<ProductImageResponseDto> uploadImage(int productId, List<File> files) throws Exception {
         Product product = productRepository.findById(productId).orElseThrow(() -> new NoResourceFoundException("No product found with provided id"));
         List<ProductImageResponseDto> productImages = new ArrayList<>();
@@ -109,5 +128,16 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
             }
         });
         return productImages;
+    }
+
+    public ReviewResponseDto addReview(CreateProductReviewDto createDto) throws Exception{
+        Product product = productRepository.findById(createDto.getProductId()).orElseThrow(() -> new NoResourceFoundException("No product found with provided id"));
+        User customer = userRepository.findById(createDto.getCustomerId()).orElseThrow(() -> new NoResourceFoundException("No customer found with provided id"));
+        ProductReview review = new ProductReview();
+        review.setComment(createDto.getComment());
+        review.setProduct(product);
+        review.setCustomer(customer);
+        ProductReview newRecord = productReviewRepository.save(review);
+        return modelMapper.map(newRecord, ReviewResponseDto.class);
     }
 }

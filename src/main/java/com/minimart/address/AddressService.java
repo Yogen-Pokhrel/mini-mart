@@ -44,10 +44,9 @@ public class AddressService implements CommonService<CreateAddressDto, UpdateAdd
 
     @Override
     public AddressDetailDto save(CreateAddressDto address) throws Exception {
-        Optional<User> user = userRepository.findById(address.getUserId());
-        if(user.isEmpty())   throw new NoResourceFoundException("No User Exists with provided userID in the address");
+        User user = userRepository.findById(address.getUserId()).orElseThrow(() -> new NoResourceFoundException("No User Exists with provided ID"));
         Address newAddress = modelMapper.map(address, Address.class);
-        newAddress.setUser(user.get());
+        newAddress.setUser(user);
          addressRepository.save(newAddress);
         return modelMapper.map(newAddress, AddressDetailDto.class);
     }
