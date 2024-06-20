@@ -10,6 +10,6 @@ import lombok.Setter;
 public class ResponseMeta {
     private int page;
     private int perPage;
-    private int total;
+    private long total;
     private int pageCount;
 }

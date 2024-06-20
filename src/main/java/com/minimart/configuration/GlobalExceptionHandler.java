@@ -1,6 +1,9 @@
 package com.minimart.configuration;
 
 import com.minimart.common.ApiResponse;
+import com.minimart.common.exception.ClientRequestException;
+import com.minimart.common.exception.DuplicateResourceException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -37,5 +40,22 @@ public class GlobalExceptionHandler {
         Map<String, String> error = new HashMap<>();
         error.put("error", "Request body is missing or invalid");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ApiResponse<String>> handleDatabaseException(DataAccessException ex) {
+        String errorMessage = "Database error occurred: " + ex.getMessage();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(errorMessage));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<String>> handleException(Exception ex) {
+
+        if(ex instanceof ClientRequestException clientRequestException){
+            return ResponseEntity.status(clientRequestException.getStatusCode()).body(ApiResponse.error(clientRequestException.getMessage()));
+        }
+        String errorMessage = "Error: " + ex.getMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(errorMessage));
+
     }
 }
