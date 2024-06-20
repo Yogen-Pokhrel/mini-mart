@@ -5,6 +5,7 @@ import com.minimart.auth.dto.UserRegisterDTO;
 import com.minimart.auth.util.JWTUtil;
 import com.minimart.common.ApiResponse;
 import com.minimart.common.exception.DuplicateResourceException;
+import com.minimart.role.entity.Role;
 import com.minimart.user.dto.request.CreateUserDto;
 import com.minimart.user.dto.response.UserDetailDto;
 import jakarta.validation.Valid;
@@ -63,6 +64,7 @@ public class AuthController {
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("access_token", "Bearer " + this.jwtUtil.generateToken(existingUser));
         responseData.put("refresh_token", this.jwtUtil.generateRefreshToken(existingUser.getEmail()));
+        responseData.put("role", existingUser.getRole().stream().map(Role::getSlug).toList());
 
         return ApiResponse.success(
                 responseData,
