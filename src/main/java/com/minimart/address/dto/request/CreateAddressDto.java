@@ -1,5 +1,7 @@
 package com.minimart.address.dto.request;
 
+import com.minimart.address.enums.AddressType;
+import com.minimart.helpers.validators.ValidEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
@@ -24,4 +26,8 @@ public class CreateAddressDto {
 
     @Positive(message = "Please provide user id")
     private int userId;
+
+    @NotBlank(message = "Address Type is mandatory")
+    @ValidEnum(enumClass = AddressType.class, message = "Invalid Address Type" )
+    private AddressType addressType;
 }
