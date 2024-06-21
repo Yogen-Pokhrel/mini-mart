@@ -70,6 +70,7 @@ public class OrderService {
         }
 
         order = orderRepository.save(order);
+        mailService.sendEmail(order.getCustomer().getEmail(), "Order Created", "Your order has been "+order.getStatus().name());
         return modelMapper.map(order, OrderResponseDto.class);
     }
 
