@@ -61,6 +61,7 @@ public class OrderService {
         for(CartItem cartItem : cart.getItems()){
             OrderLineItem newOrderLineItem = new OrderLineItem();
             newOrderLineItem.setOrder(order);
+            newOrderLineItem.setStatus(OrderLineStatus.PENDING);
             newOrderLineItem.setProduct(cartItem.getProduct());
             newOrderLineItem.setQuantity(cartItem.getQuantity());
             float taxAmount = (Constants.TAX / 100) * cartItem.getPrice();
