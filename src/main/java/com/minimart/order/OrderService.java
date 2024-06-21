@@ -7,6 +7,8 @@ import com.minimart.cart.repository.CartRepository;
 import com.minimart.common.dto.PaginationDto;
 import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.configuration.Constants;
+import com.minimart.order.dto.request.ChangeOrderLineStatusDto;
+import com.minimart.order.dto.request.ChangeOrderStatusDto;
 import com.minimart.order.dto.response.OrderLineItemResponseDto;
 import com.minimart.order.dto.response.OrderResponseDto;
 import com.minimart.order.entity.Order;
@@ -17,6 +19,7 @@ import com.minimart.order.repository.OrderLineItemRepository;
 import com.minimart.order.repository.OrderRepository;
 import com.minimart.product.dto.response.ProductResponseDto;
 import com.minimart.product.entity.Product;
+import com.minimart.product.entity.ProductStatus;
 import com.minimart.product.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,15 +105,17 @@ public class OrderService {
         return paginatedProducts.map(order -> modelMapper.map(order, OrderLineItemResponseDto.class));
     }
 
-    OrderResponseDto changeStatus(int id, OrderStatus status) throws Exception {
+    OrderResponseDto changeStatus(int id, ChangeOrderStatusDto changeOrderStatusDto) throws Exception {
         Order order = orderRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No Order found for id " + id));
+        OrderStatus status = OrderStatus.valueOf(changeOrderStatusDto.getStatus());
         order.setStatus(status);
         order = orderRepository.save(order);
         return modelMapper.map(order, OrderResponseDto.class);
     }
 
-    OrderLineItemResponseDto changeLineStatus(int id, OrderLineStatus status) throws Exception {
+    OrderLineItemResponseDto changeLineStatus(int id, ChangeOrderLineStatusDto changeOrderLineStatusDto) throws Exception {
         OrderLineItem orderLineItem = orderLineItemRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No Order line found for id " + id));
+        OrderLineStatus status = OrderLineStatus.valueOf(changeOrderLineStatusDto.getStatus());
         orderLineItem.setStatus(status);
         orderLineItem = orderLineItemRepository.save(orderLineItem);
         return modelMapper.map(orderLineItem, OrderLineItemResponseDto.class);

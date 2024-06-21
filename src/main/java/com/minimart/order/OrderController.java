@@ -4,6 +4,8 @@ import com.minimart.auth.AuthDetails;
 import com.minimart.common.ApiResponse;
 import com.minimart.common.ResponseMeta;
 import com.minimart.common.dto.PaginationDto;
+import com.minimart.order.dto.request.ChangeOrderLineStatusDto;
+import com.minimart.order.dto.request.ChangeOrderStatusDto;
 import com.minimart.order.dto.response.OrderLineItemResponseDto;
 import com.minimart.order.dto.response.OrderResponseDto;
 import com.minimart.order.entity.OrderLineStatus;
@@ -68,15 +70,15 @@ public class OrderController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")
     @PatchMapping("/{id}")
-    public ApiResponse<OrderResponseDto>  changeStatus(@RequestParam OrderStatus orderStatus, @PathVariable int id) throws Exception {
-        OrderResponseDto updatedOrder = orderService.changeStatus(id, orderStatus);
+    public ApiResponse<OrderResponseDto>  changeStatus(@RequestBody ChangeOrderStatusDto changeOrderStatusDto, @PathVariable int id) throws Exception {
+        OrderResponseDto updatedOrder = orderService.changeStatus(id, changeOrderStatusDto);
         return ApiResponse.success(updatedOrder, "Order status changed successfully");
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")
     @PatchMapping("/line/{id}")
-    public ApiResponse<OrderLineItemResponseDto>  changeLineStatus(@RequestParam OrderLineStatus orderLineStatus, @PathVariable int id) throws Exception {
-        OrderLineItemResponseDto updatedOrder = orderService.changeLineStatus(id, orderLineStatus);
+    public ApiResponse<OrderLineItemResponseDto>  changeLineStatus(@RequestBody ChangeOrderLineStatusDto changeOrderLineStatusDto, @PathVariable int id) throws Exception {
+        OrderLineItemResponseDto updatedOrder = orderService.changeLineStatus(id, changeOrderLineStatusDto);
         return ApiResponse.success(updatedOrder, "Order line status changed successfully");
     }
 

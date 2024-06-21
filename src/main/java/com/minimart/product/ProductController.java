@@ -54,6 +54,7 @@ public class ProductController {
         );
     }
 
+//    @PreAuthorize("hasAnyAuthority('SELLER')")
     @GetMapping("/mine")
     private ApiResponse<List<ProductResponseDto>> findSellerProduct(PaginationDto paginationDto, ProductFilterDto productFilterDto, @AuthenticationPrincipal AuthDetails authDetails){
         productFilterDto.setSellerId(authDetails.getId());
@@ -126,7 +127,7 @@ public class ProductController {
 
 //    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PutMapping("/{id}")
-    private ApiResponse<ProductResponseDto> update(@PathVariable int id,@Valid @RequestBody UpdateProductDto updateDto) throws Exception{
+    private ApiResponse<ProductResponseDto> update(@PathVariable int id, @RequestBody UpdateProductDto updateDto) throws Exception{
         ProductResponseDto newCategory = productService.update(id, updateDto);
         return ApiResponse.success(newCategory, "Product updated successfully");
     }
