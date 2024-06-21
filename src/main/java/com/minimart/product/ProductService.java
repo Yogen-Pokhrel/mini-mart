@@ -117,6 +117,42 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
     @Override
     public ProductResponseDto update(Integer id, UpdateProductDto updateDto) throws Exception {
         Product existingRecord = productRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No product found with provided id"));
+        if(updateDto != null){
+            if(updateDto.getBrand_id() != 0){
+                Brand brand = brandRepository.findById(updateDto.getBrand_id()).orElseThrow(() -> new NoResourceFoundException("No brand found with provided id"));
+                existingRecord.setBrand(brand);
+            }
+
+            if(updateDto.getProductStatus() != null){
+                ProductStatus status = ProductStatus.valueOf(updateDto.getProductStatus());
+                existingRecord.setStatus(status);
+            }
+
+            if(updateDto.getCategory_id() != 0){
+                ProductCategory category = categoryRepository.findById(updateDto.getCategory_id()).orElseThrow(() -> new NoResourceFoundException("No Category found with provided id"));
+                existingRecord.setCategory(category);
+            }
+
+            if(updateDto.getSlug() != null){
+                existingRecord.setSlug(updateDto.getSlug());
+            }
+
+            if(updateDto.getTitle() != null){
+                existingRecord.setTitle(updateDto.getTitle());
+            }
+
+            if(updateDto.getDescription() != null){
+                existingRecord.setDescription(updateDto.getDescription());
+            }
+
+            if(updateDto.getPrice() != 0){
+                existingRecord.setPrice(updateDto.getPrice());
+            }
+
+            if(updateDto.getStock() != 0){
+                existingRecord.setStock(updateDto.getStock());
+            }
+        }
         Product updatedRecord = productRepository.save(existingRecord);
         return modelMapper.map(updatedRecord, ProductResponseDto.class);
     }

@@ -46,6 +46,10 @@ jobs:
           s3_region: randomRegion
           s3_bucketName: randomBucketName
           s3_secretKey: randomSecretKey
+          EMAIL_HOST: example.com
+          EMAIL_PORT: 5000
+          EMAIL_USERNAME: adssad
+          EMAIL_PASSWORD: asdasd
 
       - name: Verify Maven build artifacts
         run: |
@@ -91,11 +95,14 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
         env:
-          JDBC_URL: ${{ secrets.DATABASE_URL }}
           s3_accessKey: ${{ secrets.S3_ACCESSKEY }}
           s3_region: ${{ secrets.S3_REGION }}
           s3_bucketName: ${{ secrets.S3_BUCKETNAME }}
           s3_secretKey: ${{ secrets.S3_SECRETKEY }}
+          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+          EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
 
 
       - name: Heroku Container Registry Login

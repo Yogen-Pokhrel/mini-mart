@@ -1,5 +1,6 @@
 package com.minimart.product;
 
+import com.minimart.auth.AuthDetails;
 import com.minimart.common.ApiResponse;
 import com.minimart.common.ResponseMeta;
 import com.minimart.common.dto.PaginationDto;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -40,6 +42,22 @@ public class ProductController {
     @GetMapping
     private ApiResponse<List<ProductResponseDto>> findAll(PaginationDto paginationDto, ProductFilterDto productFilterDto){
 
+        Page<ProductResponseDto> userPaginated = productService.findAll(paginationDto, productFilterDto);
+        return ApiResponse.success(
+                userPaginated.getContent(),
+                "Products fetched successfully",
+                new ResponseMeta(
+                        userPaginated.getNumber(),
+                        userPaginated.getSize(),
+                        userPaginated.getTotalElements(),
+                        userPaginated.getTotalPages())
+        );
+    }
+
+//    @PreAuthorize("hasAnyAuthority('SELLER')")
+    @GetMapping("/mine")
+    private ApiResponse<List<ProductResponseDto>> findSellerProduct(PaginationDto paginationDto, ProductFilterDto productFilterDto, @AuthenticationPrincipal AuthDetails authDetails){
+        productFilterDto.setSellerId(authDetails.getId());
         Page<ProductResponseDto> userPaginated = productService.findAll(paginationDto, productFilterDto);
         return ApiResponse.success(
                 userPaginated.getContent(),
@@ -109,7 +127,7 @@ public class ProductController {
 
 //    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PutMapping("/{id}")
-    private ApiResponse<ProductResponseDto> update(@PathVariable int id,@Valid @RequestBody UpdateProductDto updateDto) throws Exception{
+    private ApiResponse<ProductResponseDto> update(@PathVariable int id, @RequestBody UpdateProductDto updateDto) throws Exception{
         ProductResponseDto newCategory = productService.update(id, updateDto);
         return ApiResponse.success(newCategory, "Product updated successfully");
     }

@@ -26,4 +26,8 @@ public class OrderLineItem {
     private float taxAmount;
     private float totalPrice;
 
+    @Column(nullable = true)
+    @Enumerated(EnumType.ORDINAL)
+    private OrderLineStatus status;
+
 }
