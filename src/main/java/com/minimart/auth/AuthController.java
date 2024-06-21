@@ -20,7 +20,7 @@ import java.util.*;
 
 @RestController()
 @RequestMapping("api/v1/auth")
-@CrossOrigin(origins = "", allowedHeaders = "")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AuthController {
 
     private final AuthService authService;
