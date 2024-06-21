@@ -1,5 +1,6 @@
 package com.minimart.auth;
 
+import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.user.UserService;
 import com.minimart.user.dto.request.CreateUserDto;
 import com.minimart.user.dto.response.UserDetailDto;
@@ -35,5 +36,10 @@ public class AuthService implements UserDetailsService {
 
     public UserDetailDto register(CreateUserDto user) {
         return userService.save(user);
+    }
+
+    public UserDetailDto getLoggedInUserData(int userId) throws Exception{
+        User  u = userRepository.findById(userId).orElseThrow(() -> new NoResourceFoundException("No user found with provided id"));
+        return modelMapper.map(u, UserDetailDto.class);
     }
 }
