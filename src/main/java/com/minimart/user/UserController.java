@@ -38,20 +38,6 @@ public class UserController {
         );
     }
 
-    /*@GetMapping("/deleted")
-    public ApiResponse<List<UserDetailDto>>  findAllDeletedUsers(PaginationDto paginationDto) {
-        Page<UserDetailDto> userPaginated = userService.findAllDeletedUsers(paginationDto);
-        return ApiResponse.success(
-                userPaginated.getContent(),
-                "Users fetched successfully",
-                new ResponseMeta(
-                        userPaginated.getNumber(),
-                        userPaginated.getSize(),
-                        userPaginated.getTotalElements(),
-                        userPaginated.getTotalPages())
-        );
-    }*/
-
     @PostMapping(consumes = "multipart/form-data", produces = {"application/json"})
     public ApiResponse<UserDetailDto> createUser(@Valid @ModelAttribute CreateUserDto createUserDto) throws Exception {
         if(createUserDto.getUserImage() != null && !createUserDto.getUserImage().isEmpty()){
@@ -82,7 +68,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<?> deleteUser(@PathVariable int id) {
+    public ApiResponse<?> deleteUser(@PathVariable int id) throws Exception {
         userService.delete(id);
         return ApiResponse.success("Successfully deleted ", "true");
     }
