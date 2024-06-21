@@ -65,6 +65,7 @@ public class OrderService {
         order.setDiscountAmount(0);
 
         for(CartItem cartItem : cart.getItems()){
+            Product product = cartItem.getProduct();
             OrderLineItem newOrderLineItem = new OrderLineItem();
             newOrderLineItem.setOrder(order);
             newOrderLineItem.setStatus(OrderLineStatus.PENDING);
@@ -78,6 +79,10 @@ public class OrderService {
             order.setTaxAmount(order.getTaxAmount() + newOrderLineItem.getTaxAmount());
             order.setAmount(order.getAmount() + (newOrderLineItem.getUnitPrice() * newOrderLineItem.getQuantity()));
             order.setTotalAmount(order.getTotalAmount() + newOrderLineItem.getTotalPrice());
+
+            //update stock quantity
+            product.setStock(product.getStock() - cartItem.getQuantity());
+            productRepository.save(product);
         }
 
         order = orderRepository.save(order);
