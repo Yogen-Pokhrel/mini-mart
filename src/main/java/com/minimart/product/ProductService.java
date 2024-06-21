@@ -119,7 +119,10 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
 
     @Override
     public void delete(Integer id) throws Exception {
-        findById(id);
+        Product product = productRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No product found with provided id"));
+        if(!product.getOrderLineItems().isEmpty()){
+            throw new Exception("You cannot delete a product that has been purchased already");
+        }
         productRepository.deleteById(id);
     }
 
