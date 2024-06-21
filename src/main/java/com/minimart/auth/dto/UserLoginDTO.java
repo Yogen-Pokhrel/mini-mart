@@ -13,7 +13,7 @@ public class UserLoginDTO {
     @Email
     private String email;
     @NotBlank(message = "password is required")
-    @ValidPassword
+//    @ValidPassword
     private String password;
 
     @NotBlank(message = "Role type is mandatory")

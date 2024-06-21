@@ -1,7 +1,7 @@
 package com.minimart.configuration;
 
-import com.amazonaws.services.managedgrafana.model.Role;
 import com.minimart.auth.filter.JWTFilter;
+import com.minimart.user.dto.RegistrationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,13 +34,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests((requests) -> requests
+        http
+//                .cors(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "api/v1/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1/**").permitAll()
+                        .requestMatchers("api/v1/users").authenticated()
                         .requestMatchers("/api/**").authenticated()
                 )
-                .csrf(AbstractHttpConfigurer::disable) // spring boot enables csrf by default which blocks POST PUT PATCH requests
-                .cors(AbstractHttpConfigurer::disable);
+                .csrf(AbstractHttpConfigurer::disable); // spring boot enables csrf by default which blocks POST PUT PATCH requests
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -6,9 +6,11 @@ import com.minimart.common.ResponseMeta;
 import com.minimart.common.dto.PaginationDto;
 import com.minimart.order.dto.response.OrderResponseDto;
 import com.minimart.order.entity.OrderStatus;
+import com.minimart.product.dto.response.ProductResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     @PostMapping
     public ApiResponse<OrderResponseDto> createOrder(@AuthenticationPrincipal AuthDetails authDetails) throws Exception {
         OrderResponseDto newOrder = orderService.addOrder(authDetails.getId());
@@ -31,8 +34,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public ApiResponse<List<OrderResponseDto>> getAllOrders(PaginationDto paginationDto, @RequestParam(required = false)Optional<Integer> userId) {
-        Page<OrderResponseDto> orders = orderService.findAll(paginationDto, userId);
+    public ApiResponse<List<OrderResponseDto>> getAllOrders(PaginationDto paginationDto, @AuthenticationPrincipal AuthDetails authDetails) {
+        Page<OrderResponseDto> orders = orderService.findAll(paginationDto, authDetails.getId());
         return ApiResponse.success(
                 orders.getContent(),
                 "Orders fetched successfully",
@@ -45,19 +48,36 @@ public class OrderController {
 
     }
 
+    @GetMapping("/seller")
+    public ApiResponse<List<ProductResponseDto>> getMyOrders(PaginationDto paginationDto, @AuthenticationPrincipal AuthDetails authDetails) {
+        Page<ProductResponseDto> orders = orderService.findSellerOrders(paginationDto, authDetails.getId());
+        return ApiResponse.success(
+                orders.getContent(),
+                "Ordered products fetched successfully",
+                new ResponseMeta(
+                        orders.getNumber(),
+                        orders.getSize(),
+                        orders.getTotalElements(),
+                        orders.getTotalPages())
+        );
+
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")
     @PatchMapping("/{id}")
     public ApiResponse<OrderResponseDto>  changeStatus(@RequestParam OrderStatus orderStatus, @PathVariable int id) throws Exception {
         OrderResponseDto updatedOrder = orderService.changeStatus(id, orderStatus);
         return ApiResponse.success(updatedOrder, "Order status changed successfully");
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")
     @PatchMapping("/{id}/cancel")
     public ApiResponse<OrderResponseDto>  cancelOrder(@PathVariable int id) throws Exception {
         OrderResponseDto updatedOrder = orderService.cancelOrder(id);
         return ApiResponse.success(updatedOrder, "Order cancelled successfully");
     }
 
-
+    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     @PatchMapping("/{id}/return")
     public ApiResponse<OrderResponseDto>  returnOrder(@PathVariable int id) throws Exception {
         OrderResponseDto updatedOrder = orderService.returnOrder(id);

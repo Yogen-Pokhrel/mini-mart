@@ -10,6 +10,8 @@ import com.minimart.order.dto.response.OrderResponseDto;
 import com.minimart.order.entity.Order;
 import com.minimart.order.entity.OrderLineItem;
 import com.minimart.order.entity.OrderStatus;
+import com.minimart.product.dto.response.ProductResponseDto;
+import com.minimart.product.entity.Product;
 import com.minimart.product.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,16 +71,19 @@ public class OrderService {
 
 
     @SuppressWarnings("unchecked")
-    public Page<OrderResponseDto> findAll(PaginationDto paginationDto, Optional<Integer> userId) {
+    public Page<OrderResponseDto> findAll(PaginationDto paginationDto, int userId) {
         Pageable pageable = PageRequest.of(paginationDto.getPage(), paginationDto.getSize());
         Page<Order> paginatedOrders;
-        if (userId.isPresent()) {
-            paginatedOrders = orderRepository.findByUserId(userId.get(), pageable);
-        } else {
-            paginatedOrders = orderRepository.findAll(pageable);
-        }
-
+        paginatedOrders = orderRepository.findByUserId(userId, pageable);
         return paginatedOrders.map(order -> modelMapper.map(order, OrderResponseDto.class));
+    }
+
+    @SuppressWarnings("unchecked")
+    public Page<ProductResponseDto> findSellerOrders(PaginationDto paginationDto, int sellerId) {
+        Pageable pageable = PageRequest.of(paginationDto.getPage(), paginationDto.getSize());
+        Page<Product> paginatedProducts;
+        paginatedProducts = productRepository.findOrderedProducts(sellerId, pageable);
+        return paginatedProducts.map(order -> modelMapper.map(order, ProductResponseDto.class));
     }
 
     OrderResponseDto changeStatus(int id, OrderStatus status) throws Exception {
