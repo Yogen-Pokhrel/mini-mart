@@ -4,7 +4,9 @@ import com.minimart.auth.AuthDetails;
 import com.minimart.common.ApiResponse;
 import com.minimart.common.ResponseMeta;
 import com.minimart.common.dto.PaginationDto;
+import com.minimart.order.dto.response.OrderLineItemResponseDto;
 import com.minimart.order.dto.response.OrderResponseDto;
+import com.minimart.order.entity.OrderLineStatus;
 import com.minimart.order.entity.OrderStatus;
 import com.minimart.product.dto.response.ProductResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -50,8 +52,8 @@ public class OrderController {
 
     @PreAuthorize("hasAnyAuthority('SELLER')")
     @GetMapping("/seller")
-    public ApiResponse<List<ProductResponseDto>> getMyOrders(PaginationDto paginationDto, @AuthenticationPrincipal AuthDetails authDetails) {
-        Page<ProductResponseDto> orders = orderService.findSellerOrders(paginationDto, authDetails.getId());
+    public ApiResponse<List<OrderLineItemResponseDto>> getMyOrders(PaginationDto paginationDto, @AuthenticationPrincipal AuthDetails authDetails) {
+        Page<OrderLineItemResponseDto> orders = orderService.findSellerOrders(paginationDto, authDetails.getId());
         return ApiResponse.success(
                 orders.getContent(),
                 "Ordered products fetched successfully",
@@ -69,6 +71,13 @@ public class OrderController {
     public ApiResponse<OrderResponseDto>  changeStatus(@RequestParam OrderStatus orderStatus, @PathVariable int id) throws Exception {
         OrderResponseDto updatedOrder = orderService.changeStatus(id, orderStatus);
         return ApiResponse.success(updatedOrder, "Order status changed successfully");
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")
+    @PatchMapping("/line/{id}")
+    public ApiResponse<OrderLineItemResponseDto>  changeLineStatus(@RequestParam OrderLineStatus orderLineStatus, @PathVariable int id) throws Exception {
+        OrderLineItemResponseDto updatedOrder = orderService.changeLineStatus(id, orderLineStatus);
+        return ApiResponse.success(updatedOrder, "Order line status changed successfully");
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")

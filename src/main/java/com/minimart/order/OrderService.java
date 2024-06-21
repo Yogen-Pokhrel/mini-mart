@@ -7,10 +7,14 @@ import com.minimart.cart.repository.CartRepository;
 import com.minimart.common.dto.PaginationDto;
 import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.configuration.Constants;
+import com.minimart.order.dto.response.OrderLineItemResponseDto;
 import com.minimart.order.dto.response.OrderResponseDto;
 import com.minimart.order.entity.Order;
 import com.minimart.order.entity.OrderLineItem;
+import com.minimart.order.entity.OrderLineStatus;
 import com.minimart.order.entity.OrderStatus;
+import com.minimart.order.repository.OrderLineItemRepository;
+import com.minimart.order.repository.OrderRepository;
 import com.minimart.product.dto.response.ProductResponseDto;
 import com.minimart.product.entity.Product;
 import com.minimart.product.repository.ProductRepository;
@@ -21,14 +25,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
 @Service
 public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -90,11 +94,11 @@ public class OrderService {
     }
 
     @SuppressWarnings("unchecked")
-    public Page<ProductResponseDto> findSellerOrders(PaginationDto paginationDto, int sellerId) {
+    public Page<OrderLineItemResponseDto> findSellerOrders(PaginationDto paginationDto, int sellerId) {
         Pageable pageable = PageRequest.of(paginationDto.getPage(), paginationDto.getSize());
-        Page<Product> paginatedProducts;
-        paginatedProducts = productRepository.findOrderedProducts(sellerId, pageable);
-        return paginatedProducts.map(order -> modelMapper.map(order, ProductResponseDto.class));
+        Page<OrderLineItem> paginatedProducts;
+        paginatedProducts = orderLineItemRepository.findOrderedProducts(sellerId, pageable);
+        return paginatedProducts.map(order -> modelMapper.map(order, OrderLineItemResponseDto.class));
     }
 
     OrderResponseDto changeStatus(int id, OrderStatus status) throws Exception {
@@ -102,6 +106,13 @@ public class OrderService {
         order.setStatus(status);
         order = orderRepository.save(order);
         return modelMapper.map(order, OrderResponseDto.class);
+    }
+
+    OrderLineItemResponseDto changeLineStatus(int id, OrderLineStatus status) throws Exception {
+        OrderLineItem orderLineItem = orderLineItemRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No Order line found for id " + id));
+        orderLineItem.setStatus(status);
+        orderLineItem = orderLineItemRepository.save(orderLineItem);
+        return modelMapper.map(orderLineItem, OrderLineItemResponseDto.class);
     }
 
     OrderResponseDto cancelOrder(int id) throws Exception {
