@@ -40,7 +40,8 @@ public class SecurityConfig {
                         .requestMatchers("api/v1/users").authenticated()
                         .requestMatchers("/api/**").authenticated()
                 )
-                .csrf(AbstractHttpConfigurer::disable); // spring boot enables csrf by default which blocks POST PUT PATCH requests
+                .csrf(AbstractHttpConfigurer::disable) // spring boot enables csrf by default which blocks POST PUT PATCH requests
+                .cors(AbstractHttpConfigurer::disable);
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

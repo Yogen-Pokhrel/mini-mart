@@ -9,20 +9,20 @@ import com.minimart.common.exception.DuplicateResourceException;
 import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.role.entity.Role;
 import com.minimart.user.dto.request.CreateUserDto;
+import com.minimart.user.dto.response.SimpleUserDto;
 import com.minimart.user.dto.response.UserDetailDto;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController()
 @RequestMapping("api/v1/auth")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AuthController {
 
     private final AuthService authService;
@@ -87,6 +87,12 @@ public class AuthController {
                 responseData,
                 "User logged in successfully"
         );
+    }
+
+    @GetMapping("/me")
+    public ApiResponse<UserDetailDto> getCurrentUser(@AuthenticationPrincipal AuthDetails authDetails) throws Exception {
+        UserDetailDto userData = authService.getLoggedInUserData(authDetails.getId());
+        return ApiResponse.success(userData, "User data fetched successfully");
     }
 }
 
