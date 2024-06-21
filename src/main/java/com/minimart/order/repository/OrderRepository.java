@@ -1,4 +1,4 @@
-package com.minimart.order;
+package com.minimart.order.repository;
 
 import com.minimart.order.entity.Order;
 import org.springframework.data.domain.Page;

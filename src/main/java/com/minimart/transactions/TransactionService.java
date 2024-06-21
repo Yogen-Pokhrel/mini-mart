@@ -1,7 +1,7 @@
 package com.minimart.transactions;
 
 import com.minimart.common.exception.NoResourceFoundException;
-import com.minimart.order.OrderRepository;
+import com.minimart.order.repository.OrderRepository;
 import com.minimart.order.entity.Order;
 import com.minimart.order.entity.OrderStatus;
 import com.minimart.transactions.dto.request.CreateTransactionDto;
