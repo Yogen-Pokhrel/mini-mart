@@ -10,13 +10,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WaaApplicationConfig implements WebMvcConfigurer {
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("OPTIONS","GET", "POST", "PUT", "DELETE");
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//
+//        registry.addMapping("/**")
+//                .allowedOrigins("*")
+//                .allowedMethods("OPTIONS","GET", "POST", "PUT", "DELETE");
+//    }
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {

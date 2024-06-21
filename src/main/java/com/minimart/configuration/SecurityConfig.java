@@ -34,13 +34,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests((requests) -> requests
+        http
+//                .cors(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/products/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
                 )
-                .csrf(AbstractHttpConfigurer::disable) // spring boot enables csrf by default which blocks POST PUT PATCH requests
-                .cors(AbstractHttpConfigurer::disable);
+                .csrf(AbstractHttpConfigurer::disable); // spring boot enables csrf by default which blocks POST PUT PATCH requests
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
