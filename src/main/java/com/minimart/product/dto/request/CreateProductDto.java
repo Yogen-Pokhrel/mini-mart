@@ -39,9 +39,8 @@ public class CreateProductDto {
     @Positive(message = "Please provide a valid brand id")
     private int brand_id;
 
-    //This should be fetched from JWT instead
-    @Positive(message = "Please provide a valid seller id")
-    private int seller_id;
+    @JsonIgnore
+    private int seller_id = 0;
 
     @JsonIgnore
     private Brand brand;

@@ -91,8 +91,9 @@ public class ProductController {
 
 //    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PostMapping
-    private ApiResponse<ProductResponseDto> create(@Valid @RequestBody CreateProductDto createDto) throws Exception{
+    private ApiResponse<ProductResponseDto> create(@AuthenticationPrincipal AuthDetails authDetails, @Valid @RequestBody CreateProductDto createDto) throws Exception{
         createDto.setSlug(Utilities.slugify(createDto.getSlug(), "-"));
+        createDto.setSeller_id(authDetails.getId());
         ProductResponseDto newCategory = productService.save(createDto);
         return ApiResponse.success(newCategory, "Product created successfully");
     }
