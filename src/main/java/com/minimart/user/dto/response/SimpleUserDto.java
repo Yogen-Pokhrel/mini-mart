@@ -8,5 +8,4 @@ public class SimpleUserDto {
     private String firstName;
     private String lastName;
     private String email;
-//    private boolean deleted;
 }

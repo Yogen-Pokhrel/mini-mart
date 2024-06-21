@@ -3,6 +3,7 @@ package com.minimart.product.entity;
 import com.minimart.brand.entity.Brand;
 import com.minimart.cart.entity.CartItem;
 import com.minimart.category.entity.ProductCategory;
+import com.minimart.order.entity.OrderLineItem;
 import com.minimart.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -49,4 +50,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductReview> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 }

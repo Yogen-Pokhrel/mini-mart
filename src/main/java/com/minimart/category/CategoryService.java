@@ -50,7 +50,6 @@ public class CategoryService implements CommonService<CreateCategoryDto, UpdateC
         Integer parentCategoryId = createCategoryDto.getParentCategoryId();
         createCategoryDto.setParentCategoryId(-1);
         ProductCategory newProductCategory = modelMapper.map(createCategoryDto, ProductCategory.class);
-        System.out.println(newProductCategory.getId());
         ProductCategory parentCategory = null;
         if(parentCategoryId != null){
             parentCategory = categoryRepository.findById(parentCategoryId).orElseThrow(() -> new NoResourceFoundException("No Category found with provided id"));

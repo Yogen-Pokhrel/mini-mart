@@ -1,6 +1,6 @@
 package com.minimart.user.dto.response;
 
-import com.minimart.role.entity.Role;
+import com.minimart.role.dto.RoleResponseDto;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -16,6 +16,5 @@ public class UserDetailDto {
     private String phone;
     private LocalDate addedOn;
     private SimpleUserDto addedBy;
-    private List<Role> roles;
-//    private boolean deleted;
+    private List<RoleResponseDto> roles;
 }
