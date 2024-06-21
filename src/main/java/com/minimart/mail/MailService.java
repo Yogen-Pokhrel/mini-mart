@@ -1,4 +1,4 @@
-package com.minimart.helpers;
+package com.minimart.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,7 +13,7 @@ public class MailService {
 
     public void sendEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("from@example.com");
+        message.setFrom("admin@minimart.com");
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);

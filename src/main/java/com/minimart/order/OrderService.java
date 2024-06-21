@@ -6,6 +6,7 @@ import com.minimart.cart.repository.CartRepository;
 import com.minimart.common.dto.PaginationDto;
 import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.configuration.Constants;
+import com.minimart.mail.MailService;
 import com.minimart.order.dto.response.OrderResponseDto;
 import com.minimart.order.entity.Order;
 import com.minimart.order.entity.OrderLineItem;
@@ -37,6 +38,9 @@ public class OrderService {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    MailService mailService;
 
     public OrderResponseDto addOrder(int customerId) throws Exception {
         Cart cart = cartRepository.findByUserId(customerId).orElseThrow(() -> new NoResourceFoundException("No Cart found for the user"));
@@ -89,7 +93,9 @@ public class OrderService {
     OrderResponseDto changeStatus(int id, OrderStatus status) throws Exception {
         Order order = orderRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No Order found for id " + id));
         order.setStatus(status);
+
         order = orderRepository.save(order);
+        mailService.sendEmail(order.getCustomer().getEmail(), "Order Status", "Your order has been "+order.getStatus().name());
         return modelMapper.map(order, OrderResponseDto.class);
     }
 
@@ -100,6 +106,7 @@ public class OrderService {
         }
         order.setStatus(OrderStatus.CANCELLED);
         order = orderRepository.save(order);
+        mailService.sendEmail(order.getCustomer().getEmail(), "Order Cancelled", "Your order has been "+order.getStatus().name());
         return modelMapper.map(order, OrderResponseDto.class);
     }
 
@@ -116,6 +123,7 @@ public class OrderService {
         }
         order.setStatus(OrderStatus.RETURN_REQUEST);
         order = orderRepository.save(order);
+        mailService.sendEmail(order.getCustomer().getEmail(), "Order Returned", "Your order has been "+order.getStatus().name());
         return modelMapper.map(order, OrderResponseDto.class);
     }
 }
