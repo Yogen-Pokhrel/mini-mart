@@ -10,6 +10,7 @@ import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.helpers.ListMapper;
 import com.minimart.product.dto.request.CreateProductDto;
 import com.minimart.product.dto.request.CreateProductReviewDto;
+import com.minimart.product.dto.request.ProductFilterDto;
 import com.minimart.product.dto.request.UpdateProductDto;
 import com.minimart.product.dto.response.ProductDetailResponseDto;
 import com.minimart.product.dto.response.ProductImageResponseDto;
@@ -22,6 +23,7 @@ import com.minimart.product.entity.ProductStatus;
 import com.minimart.product.repository.ProductImageRepository;
 import com.minimart.product.repository.ProductRepository;
 import com.minimart.product.repository.ProductReviewRepository;
+import com.minimart.product.repository.ProductSpecification;
 import com.minimart.role.dto.RoleResponseDto;
 import com.minimart.role.entity.Role;
 import com.minimart.user.dto.response.UserDetailDto;
@@ -32,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -70,12 +73,13 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
         return (List<ProductResponseDto>) listMapper.mapList(productRepository.findAll(),new ProductResponseDto());
     }
 
-    @Override
     @SuppressWarnings("unchecked")
-    public Page<ProductResponseDto> findAll(PaginationDto paginationDto) {
+    public Page<ProductResponseDto> findAll(PaginationDto paginationDto, ProductFilterDto productFilterDto) {
         Pageable pageable = PageRequest.of(paginationDto.getPage(), paginationDto.getSize());
-        Page<Product> paginatedUser = productRepository.findAll(pageable);
-        return paginatedUser.map(user -> modelMapper.map(user, ProductResponseDto.class));
+        System.out.println("productFilterDto" + productFilterDto);
+        Specification<Product> spec = new ProductSpecification(productFilterDto);
+        Page<Product> paginatedProducts = productRepository.findAll(spec, pageable);
+        return paginatedProducts.map(product -> modelMapper.map(product, ProductResponseDto.class));
     }
 
     @SuppressWarnings("unchecked")

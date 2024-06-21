@@ -6,10 +6,7 @@ import com.minimart.common.dto.PaginationDto;
 import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.helpers.FileUploaderService;
 import com.minimart.helpers.Utilities;
-import com.minimart.product.dto.request.CreateProductDto;
-import com.minimart.product.dto.request.CreateProductReviewDto;
-import com.minimart.product.dto.request.UpdateProductDto;
-import com.minimart.product.dto.request.UploadProductImagesDto;
+import com.minimart.product.dto.request.*;
 import com.minimart.product.dto.response.ProductDetailResponseDto;
 import com.minimart.product.dto.response.ProductImageResponseDto;
 import com.minimart.product.dto.response.ProductResponseDto;
@@ -39,8 +36,8 @@ public class ProductController {
 
 
     @GetMapping
-    private ApiResponse<List<ProductResponseDto>> findAll(PaginationDto paginationDto){
-        Page<ProductResponseDto> userPaginated = productService.findAll(paginationDto);
+    private ApiResponse<List<ProductResponseDto>> findAll(PaginationDto paginationDto, ProductFilterDto productFilterDto){
+        Page<ProductResponseDto> userPaginated = productService.findAll(paginationDto, productFilterDto);
         return ApiResponse.success(
                 userPaginated.getContent(),
                 "Products fetched successfully",

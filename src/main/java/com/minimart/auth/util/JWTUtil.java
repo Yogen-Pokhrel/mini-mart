@@ -30,7 +30,7 @@ public class JWTUtil {
             .map(GrantedAuthority::getAuthority)
             .toList().getFirst();
         claims.put("roles", loggedRole);
-        claims.put("email", details.getEmail());
+        claims.put("sub", details.getEmail());
 
         return this.generateAccessTokens(claims, details.getUsername());
     }
