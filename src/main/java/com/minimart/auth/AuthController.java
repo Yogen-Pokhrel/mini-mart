@@ -1,10 +1,12 @@
 package com.minimart.auth;
 
 import com.minimart.auth.dto.UserLoginDTO;
+import com.minimart.auth.dto.UserLoginResponseDTO;
 import com.minimart.auth.dto.UserRegisterDTO;
 import com.minimart.auth.util.JWTUtil;
 import com.minimart.common.ApiResponse;
 import com.minimart.common.exception.DuplicateResourceException;
+import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.role.entity.Role;
 import com.minimart.user.dto.request.CreateUserDto;
 import com.minimart.user.dto.response.UserDetailDto;
@@ -17,8 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController()
 @RequestMapping("api/v1/auth")
@@ -61,10 +62,27 @@ public class AuthController {
             throw new DuplicateResourceException("User not registered.");
         }
 
+        Optional<Role> neededRoleOpt = existingUser.getRoles().stream()
+                .filter(role -> role.getSlug().equals(userLoginDTO.getRegistrationType()))
+                .findFirst();
+
+        if (neededRoleOpt.isEmpty()) {
+            throw new NoResourceFoundException(userLoginDTO.getRegistrationType() + " role not available for the user");
+        }
+
+        Role loggedRole = neededRoleOpt.get();
+
+        System.out.println(existingUser.getRoles());
+        UserLoginResponseDTO userLoginResponseDTO = modelMapper.map(existingUser, UserLoginResponseDTO.class);
+
+        existingUser.setRoles(Collections.singletonList(loggedRole));
+
         Map<String, Object> responseData = new HashMap<>();
+
         responseData.put("access_token", "Bearer " + this.jwtUtil.generateToken(existingUser));
         responseData.put("refresh_token", this.jwtUtil.generateRefreshToken(existingUser.getEmail()));
-        responseData.put("role", existingUser.getRole().stream().map(Role::getSlug).toList());
+
+        responseData.put("userData", userLoginResponseDTO);
 
         return ApiResponse.success(
                 responseData,
