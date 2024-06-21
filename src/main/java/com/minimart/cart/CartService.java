@@ -51,6 +51,9 @@ public class CartService {
             cart = assignCart(user);
         }
         Product product = productRepository.findById(productId).orElseThrow(() -> new NoResourceFoundException("Cannot find product with id " + productId));
+        if (product.getStock() < quantity) {
+            throw new Exception("Not enough stock for product with id " + productId);
+        }
 
         CartItem cartItem = new CartItem();
         cartItem.setCart(cart);
