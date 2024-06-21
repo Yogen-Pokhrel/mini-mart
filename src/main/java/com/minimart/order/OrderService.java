@@ -10,6 +10,7 @@ import com.minimart.configuration.Constants;
 import com.minimart.order.dto.request.ChangeOrderLineStatusDto;
 import com.minimart.order.dto.request.ChangeOrderStatusDto;
 import com.minimart.order.dto.response.OrderLineItemResponseDto;
+import com.minimart.mail.MailService;
 import com.minimart.order.dto.response.OrderResponseDto;
 import com.minimart.order.entity.Order;
 import com.minimart.order.entity.OrderLineItem;
@@ -48,6 +49,8 @@ public class OrderService {
 
     @Autowired
     CartItemRepository cartItemRepository;
+    @Autowired
+    MailService mailService;
 
     public OrderResponseDto addOrder(int customerId) throws Exception {
         Cart cart = cartRepository.findByUserId(customerId).orElseThrow(() -> new NoResourceFoundException("No Cart found for the user"));
@@ -85,6 +88,7 @@ public class OrderService {
 
         cartRepository.save(cart);
 
+        mailService.sendEmail(order.getCustomer().getEmail(), "Order Created", "Your order has been "+order.getStatus().name());
         return modelMapper.map(order, OrderResponseDto.class);
     }
 
@@ -109,7 +113,9 @@ public class OrderService {
         Order order = orderRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No Order found for id " + id));
         OrderStatus status = OrderStatus.valueOf(changeOrderStatusDto.getStatus());
         order.setStatus(status);
+
         order = orderRepository.save(order);
+        mailService.sendEmail(order.getCustomer().getEmail(), "Order Status", "Your order has been "+order.getStatus().name());
         return modelMapper.map(order, OrderResponseDto.class);
     }
 
@@ -128,6 +134,7 @@ public class OrderService {
         }
         order.setStatus(OrderStatus.CANCELLED);
         order = orderRepository.save(order);
+        mailService.sendEmail(order.getCustomer().getEmail(), "Order Cancelled", "Your order has been "+order.getStatus().name());
         return modelMapper.map(order, OrderResponseDto.class);
     }
 
@@ -144,6 +151,7 @@ public class OrderService {
         }
         order.setStatus(OrderStatus.RETURN_REQUEST);
         order = orderRepository.save(order);
+        mailService.sendEmail(order.getCustomer().getEmail(), "Order Returned", "Your order has been "+order.getStatus().name());
         return modelMapper.map(order, OrderResponseDto.class);
     }
 }
