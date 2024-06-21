@@ -5,6 +5,7 @@ import com.minimart.address.entity.Address;
 import com.minimart.common.CommonService;
 import com.minimart.common.dto.PaginationDto;
 import com.minimart.common.exception.NoResourceFoundException;
+import com.minimart.order.entity.OrderLineStatus;
 import com.minimart.role.RoleRepository;
 import com.minimart.role.entity.Role;
 import com.minimart.user.dto.RegistrationType;
@@ -12,6 +13,7 @@ import com.minimart.user.dto.request.CreateUserDto;
 import com.minimart.user.dto.request.UpdateUserDto;
 import com.minimart.user.dto.response.UserDetailDto;
 import com.minimart.user.entity.User;
+import com.minimart.user.entity.UserStatus;
 import com.minimart.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -91,6 +93,12 @@ public class UserService implements CommonService<CreateUserDto, UpdateUserDto, 
             if (updateUserDto.getPassword() != null) {
                 user.setPassword(updateUserDto.getPassword());
             }
+
+            if(updateUserDto.getStatus() != null){
+                UserStatus status = UserStatus.valueOf(updateUserDto.getStatus());
+                user.setStatus(status);
+            }
+
             if (updateUserDto.getImage() != null) {
                 user.setImage(updateUserDto.getImage());
             }

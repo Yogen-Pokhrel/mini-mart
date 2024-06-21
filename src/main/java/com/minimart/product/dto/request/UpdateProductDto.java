@@ -29,7 +29,7 @@ public class UpdateProductDto {
     private int stock = 0;
 
     @ValidEnum(enumClass = ProductStatus.class, message = "Please provide a valid status")
-    private String productStatus = ProductStatus.OFFLINE.toString();
+    private String productStatus;
 
     @Positive(message = "Please provide a valid category id")
     private int category_id;
