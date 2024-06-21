@@ -48,6 +48,7 @@ public class OrderController {
 
     }
 
+    @PreAuthorize("hasAnyAuthority('SELLER')")
     @GetMapping("/seller")
     public ApiResponse<List<ProductResponseDto>> getMyOrders(PaginationDto paginationDto, @AuthenticationPrincipal AuthDetails authDetails) {
         Page<ProductResponseDto> orders = orderService.findSellerOrders(paginationDto, authDetails.getId());

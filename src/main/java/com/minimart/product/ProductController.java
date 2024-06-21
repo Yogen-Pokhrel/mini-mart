@@ -39,6 +39,7 @@ public class ProductController {
 
     @GetMapping
     private ApiResponse<List<ProductResponseDto>> findAll(PaginationDto paginationDto, ProductFilterDto productFilterDto){
+
         Page<ProductResponseDto> userPaginated = productService.findAll(paginationDto, productFilterDto);
         return ApiResponse.success(
                 userPaginated.getContent(),
@@ -70,7 +71,7 @@ public class ProductController {
         return ApiResponse.success(reviews , "Product fetched successfully");
     }
 
-    @PreAuthorize("hasAnyAuthority('SELLER')")
+//    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PostMapping
     private ApiResponse<ProductResponseDto> create(@Valid @RequestBody CreateProductDto createDto) throws Exception{
         createDto.setSlug(Utilities.slugify(createDto.getSlug(), "-"));
@@ -78,7 +79,7 @@ public class ProductController {
         return ApiResponse.success(newCategory, "Product created successfully");
     }
 
-    @PreAuthorize("hasAnyAuthority('SELLER')")
+//    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PostMapping(value = "/{id}/upload-images", consumes = "multipart/form-data", produces = {"application/json"} )
     private ApiResponse<List<ProductImageResponseDto>> uploadImages(@PathVariable int id, @Valid @ModelAttribute UploadProductImagesDto uploadProductImagesDto) throws Exception{
 
@@ -99,28 +100,28 @@ public class ProductController {
         return ApiResponse.success(uploadedProductImages, "Images uploaded successfully");
     }
 
-    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
+//    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     @PostMapping("/reviews")
     private ApiResponse<ReviewResponseDto> addReviews(@Valid @RequestBody CreateProductReviewDto createDto) throws Exception{
         ReviewResponseDto newRecord = productService.addReview(createDto);
         return ApiResponse.success(newRecord, "Review added successfully");
     }
 
-    @PreAuthorize("hasAnyAuthority('SELLER')")
+//    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PutMapping("/{id}")
     private ApiResponse<ProductResponseDto> update(@PathVariable int id,@Valid @RequestBody UpdateProductDto updateDto) throws Exception{
         ProductResponseDto newCategory = productService.update(id, updateDto);
         return ApiResponse.success(newCategory, "Product updated successfully");
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")
     @DeleteMapping("/{id}")
     private ApiResponse<?> delete(@PathVariable int id) throws Exception{
         productService.delete(id);
         return ApiResponse.success(null, "Product deleted successfully");
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @DeleteMapping("/{id}/review")
     private ApiResponse<?> deleteReview(@PathVariable int id) throws Exception{
         productService.deleteReview(id);
