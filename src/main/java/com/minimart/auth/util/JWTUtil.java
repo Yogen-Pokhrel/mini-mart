@@ -3,14 +3,16 @@ package com.minimart.auth.util;
 import com.minimart.auth.AuthDetails;
 import com.minimart.auth.AuthService;
 import com.minimart.common.exception.JWTClaimException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import io.jsonwebtoken.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JWTUtil {
@@ -24,15 +26,20 @@ public class JWTUtil {
 
     public String generateToken(AuthDetails details) {
         Map<String, Object> claims = new HashMap<>();
-        List<String> roleNames = details.getAuthorities().stream()
+        String loggedRole = details.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
-            .toList();
-        claims.put("roles", roleNames);
+            .toList().getFirst();
+        claims.put("roles", loggedRole);
+        claims.put("email", details.getEmail());
+
         return this.generateAccessTokens(claims, details.getUsername());
     }
 
     private String generateAccessTokens(Map<String, Object> claims, String subject) {
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+        return Jwts
+                .builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }

@@ -36,8 +36,6 @@ public class SecurityConfig {
         http.authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "api/v1/auth/**").permitAll()
                                 .requestMatchers("/api/**").authenticated()
-//                        .requestMatchers("/admin/**", "*/api/v1/**", "/api/v1/users").hasAuthority(Role.ADMIN.name())
-//                        .requestMatchers("/posts/**", "/users/**").hasAnyAuthority(Role.ADMIN.name(), Role.EDITOR.name())
                 )
                 .csrf(AbstractHttpConfigurer::disable); // spring boot enables csrf by default which blocks POST PUT PATCH requests
 
