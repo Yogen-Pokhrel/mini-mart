@@ -22,7 +22,6 @@ public class ProductSpecification implements Specification<Product> {
     public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         Predicate predicate = criteriaBuilder.conjunction();
 
-        System.out.println("I am here " +filter);
         if(filter != null) {
             if (filter.getName() != null && !filter.getName().isEmpty()) {
                 predicate = criteriaBuilder.and(predicate,

@@ -58,6 +58,10 @@ public class User extends BaseEntity {
         role.getUsers().add(this);
     }
 
+    @Column(nullable = true)
+    @Enumerated(EnumType.ORDINAL)
+    public UserStatus status;
+
 //    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private Cart cart;
 }
