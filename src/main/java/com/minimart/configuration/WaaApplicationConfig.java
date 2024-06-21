@@ -15,7 +15,7 @@ public class WaaApplicationConfig implements WebMvcConfigurer {
 
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
+                .allowedMethods("OPTIONS","GET", "POST", "PUT", "DELETE");
     }
 
     @Override
