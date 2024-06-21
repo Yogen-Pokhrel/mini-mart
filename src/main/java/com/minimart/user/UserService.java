@@ -102,7 +102,8 @@ public class UserService implements CommonService<CreateUserDto, UpdateUserDto, 
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Integer id) throws Exception {
+        findById(id);
         userRepository.deleteById(id);
     }
 

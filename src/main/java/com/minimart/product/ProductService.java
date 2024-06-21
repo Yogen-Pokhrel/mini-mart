@@ -98,7 +98,7 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
     public ProductResponseDto save(CreateProductDto createDto) throws Exception {
         ProductCategory category = categoryRepository.findById(createDto.getCategory_id()).orElseThrow(() -> new NoResourceFoundException("No Category found with provided id"));
         User user = userRepository.findById(createDto.getSeller_id()).orElseThrow(() -> new NoResourceFoundException("No user found with provided id"));
-        Brand brand = brandRepository.findById(createDto.getSeller_id()).orElseThrow(() -> new NoResourceFoundException("No brand found with provided id"));
+        Brand brand = brandRepository.findById(createDto.getBrand_id()).orElseThrow(() -> new NoResourceFoundException("No brand found with provided id"));
         ProductStatus recordType = ProductStatus.valueOf(createDto.getProductStatus());
 
         createDto.setStatus(recordType);
