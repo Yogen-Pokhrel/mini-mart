@@ -5,6 +5,7 @@ import com.minimart.auth.filter.JWTFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,7 +36,8 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "api/v1/auth/**").permitAll()
-                                .requestMatchers("/api/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "api/v1/products/**").permitAll()
+                        .requestMatchers("/api/**").authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable); // spring boot enables csrf by default which blocks POST PUT PATCH requests
 

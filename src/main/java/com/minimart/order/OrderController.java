@@ -1,5 +1,6 @@
 package com.minimart.order;
 
+import com.minimart.auth.AuthDetails;
 import com.minimart.common.ApiResponse;
 import com.minimart.common.ResponseMeta;
 import com.minimart.common.dto.PaginationDto;
@@ -8,6 +9,7 @@ import com.minimart.order.entity.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +23,9 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @PostMapping("/{id}")
-    public ApiResponse<OrderResponseDto> createOrder(@PathVariable int id) throws Exception {
-        OrderResponseDto newOrder = orderService.addOrder(id);
+    @PostMapping
+    public ApiResponse<OrderResponseDto> createOrder(@AuthenticationPrincipal AuthDetails authDetails) throws Exception {
+        OrderResponseDto newOrder = orderService.addOrder(authDetails.getId());
         return ApiResponse.success(newOrder, "Order created successfully");
     }
 
