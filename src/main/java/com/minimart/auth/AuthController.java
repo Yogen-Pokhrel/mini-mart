@@ -72,7 +72,6 @@ public class AuthController {
 
         Role loggedRole = neededRoleOpt.get();
 
-        System.out.println(existingUser.getRoles());
         UserLoginResponseDTO userLoginResponseDTO = modelMapper.map(existingUser, UserLoginResponseDTO.class);
 
         existingUser.setRoles(Collections.singletonList(loggedRole));
