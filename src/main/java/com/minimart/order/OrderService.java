@@ -2,6 +2,7 @@ package com.minimart.order;
 
 import com.minimart.cart.entity.Cart;
 import com.minimart.cart.entity.CartItem;
+import com.minimart.cart.repository.CartItemRepository;
 import com.minimart.cart.repository.CartRepository;
 import com.minimart.common.dto.PaginationDto;
 import com.minimart.common.exception.NoResourceFoundException;
@@ -38,6 +39,9 @@ public class OrderService {
     @Autowired
     ProductRepository productRepository;
 
+    @Autowired
+    CartItemRepository cartItemRepository;
+
     public OrderResponseDto addOrder(int customerId) throws Exception {
         Cart cart = cartRepository.findByUserId(customerId).orElseThrow(() -> new NoResourceFoundException("No Cart found for the user"));
         if(cart.getTotalPrice() == 0 || cart.getItems().isEmpty()){
@@ -66,6 +70,13 @@ public class OrderService {
         }
 
         order = orderRepository.save(order);
+
+        cartItemRepository.deleteAll(cart.getItems());
+        cart.getItems().clear();
+        cart.setTotalPrice(0);
+
+        cartRepository.save(cart);
+
         return modelMapper.map(order, OrderResponseDto.class);
     }
 
