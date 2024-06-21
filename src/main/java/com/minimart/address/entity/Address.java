@@ -1,5 +1,6 @@
 package com.minimart.address.entity;
 
+import com.minimart.address.enums.AddressType;
 import com.minimart.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,6 +20,9 @@ public class Address {
     private String state;
     private String zipcode;
     private String country;
+
+    @Enumerated(EnumType.STRING)
+    private AddressType addressType;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
