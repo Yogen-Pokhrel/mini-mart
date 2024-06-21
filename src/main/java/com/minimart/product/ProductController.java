@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -56,6 +57,7 @@ public class ProductController {
         return ApiResponse.success(product , "Product fetched successfully");
     }
 
+
     @GetMapping("/find-by-slug/{slug}")
     private ApiResponse<ProductDetailResponseDto> findBySlug(@PathVariable String slug) throws Exception{
         ProductDetailResponseDto product  = productService.findBySlug(slug);
@@ -68,13 +70,15 @@ public class ProductController {
         return ApiResponse.success(reviews , "Product fetched successfully");
     }
 
+    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PostMapping
     private ApiResponse<ProductResponseDto> create(@Valid @RequestBody CreateProductDto createDto) throws Exception{
         createDto.setSlug(Utilities.slugify(createDto.getSlug(), "-"));
         ProductResponseDto newCategory = productService.save(createDto);
-        return ApiResponse.success(newCategory, "Category created successfully");
+        return ApiResponse.success(newCategory, "Product created successfully");
     }
 
+    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PostMapping(value = "/{id}/upload-images", consumes = "multipart/form-data", produces = {"application/json"} )
     private ApiResponse<List<ProductImageResponseDto>> uploadImages(@PathVariable int id, @Valid @ModelAttribute UploadProductImagesDto uploadProductImagesDto) throws Exception{
 
@@ -92,27 +96,31 @@ public class ProductController {
             }
         });
         List<ProductImageResponseDto> uploadedProductImages = productService.uploadImage(id, uploadedFiles);
-        return ApiResponse.success(uploadedProductImages, "Category created successfully");
+        return ApiResponse.success(uploadedProductImages, "Images uploaded successfully");
     }
 
+    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     @PostMapping("/reviews")
     private ApiResponse<ReviewResponseDto> addReviews(@Valid @RequestBody CreateProductReviewDto createDto) throws Exception{
         ReviewResponseDto newRecord = productService.addReview(createDto);
         return ApiResponse.success(newRecord, "Review added successfully");
     }
 
+    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PutMapping("/{id}")
     private ApiResponse<ProductResponseDto> update(@PathVariable int id,@Valid @RequestBody UpdateProductDto updateDto) throws Exception{
         ProductResponseDto newCategory = productService.update(id, updateDto);
         return ApiResponse.success(newCategory, "Product updated successfully");
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")
     @DeleteMapping("/{id}")
     private ApiResponse<?> delete(@PathVariable int id) throws Exception{
         productService.delete(id);
         return ApiResponse.success(null, "Product deleted successfully");
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @DeleteMapping("/{id}/review")
     private ApiResponse<?> deleteReview(@PathVariable int id) throws Exception{
         productService.deleteReview(id);

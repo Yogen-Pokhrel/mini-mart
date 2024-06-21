@@ -10,6 +10,7 @@ import com.minimart.product.dto.response.ProductResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     @PostMapping
     public ApiResponse<OrderResponseDto> createOrder(@AuthenticationPrincipal AuthDetails authDetails) throws Exception {
         OrderResponseDto newOrder = orderService.addOrder(authDetails.getId());
@@ -61,19 +63,21 @@ public class OrderController {
 
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")
     @PatchMapping("/{id}")
     public ApiResponse<OrderResponseDto>  changeStatus(@RequestParam OrderStatus orderStatus, @PathVariable int id) throws Exception {
         OrderResponseDto updatedOrder = orderService.changeStatus(id, orderStatus);
         return ApiResponse.success(updatedOrder, "Order status changed successfully");
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN') || hasAnyAuthority('SELLER')")
     @PatchMapping("/{id}/cancel")
     public ApiResponse<OrderResponseDto>  cancelOrder(@PathVariable int id) throws Exception {
         OrderResponseDto updatedOrder = orderService.cancelOrder(id);
         return ApiResponse.success(updatedOrder, "Order cancelled successfully");
     }
 
-
+    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     @PatchMapping("/{id}/return")
     public ApiResponse<OrderResponseDto>  returnOrder(@PathVariable int id) throws Exception {
         OrderResponseDto updatedOrder = orderService.returnOrder(id);
