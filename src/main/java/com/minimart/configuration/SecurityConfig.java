@@ -37,6 +37,7 @@ public class SecurityConfig {
         http
 //                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/", "sendEmail").permitAll()
                         .requestMatchers("/", "api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/**").permitAll()
                         .requestMatchers("api/v1/users").authenticated()
