@@ -1,7 +1,9 @@
 package com.minimart.user.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.minimart.helpers.validators.ValidEnum;
 import com.minimart.user.dto.RegistrationType;
+import com.minimart.user.entity.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -37,4 +39,7 @@ public class CreateUserDto {
 
     private MultipartFile userImage;
     private String image;
+
+    @JsonIgnore
+    private UserStatus status;
 }

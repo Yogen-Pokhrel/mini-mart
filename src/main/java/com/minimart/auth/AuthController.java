@@ -8,9 +8,11 @@ import com.minimart.common.ApiResponse;
 import com.minimart.common.exception.DuplicateResourceException;
 import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.role.entity.Role;
+import com.minimart.user.dto.RegistrationType;
 import com.minimart.user.dto.request.CreateUserDto;
 import com.minimart.user.dto.response.SimpleUserDto;
 import com.minimart.user.dto.response.UserDetailDto;
+import com.minimart.user.entity.UserStatus;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,11 @@ public class AuthController {
         }
         userRegisterDTO.setPassword(this.passwordEncoder.encode(userRegisterDTO.getPassword()));
         CreateUserDto createUserDto = this.modelMapper.map(userRegisterDTO, CreateUserDto.class);
+        if(Objects.equals(userRegisterDTO.getRegistrationType(), "SELLER")){
+            createUserDto.setStatus(UserStatus.PENDING);
+        }else{
+            createUserDto.setStatus(UserStatus.APPROVED);
+        }
         return ApiResponse.success(
                 this.authService.register(createUserDto),
                 "User registered successfully"
