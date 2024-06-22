@@ -12,5 +12,5 @@ public class PaginationDto {
     private int page = 0;
 
     @Positive(message = "Size must be a positive number")
-    private int size = 25;
+    private int size = 10;
 }

@@ -24,7 +24,7 @@ public class UserRegisterDTO {
     private String email;
 
     @NotBlank(message = "password is mandatory")
-    @ValidPassword
+//    @ValidPassword
     private String password;
 
     @NotBlank(message = "Role type is mandatory")
