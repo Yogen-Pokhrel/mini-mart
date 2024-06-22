@@ -4,22 +4,32 @@ import com.minimart.auth.AuthDetails;
 import com.minimart.common.ApiResponse;
 import com.minimart.common.ResponseMeta;
 import com.minimart.common.dto.PaginationDto;
+import com.minimart.common.exception.NoResourceFoundException;
+import com.minimart.helpers.EmailTemplates;
 import com.minimart.order.dto.request.ChangeOrderLineStatusDto;
 import com.minimart.order.dto.request.ChangeOrderStatusDto;
 import com.minimart.order.dto.response.OrderLineItemResponseDto;
 import com.minimart.order.dto.response.OrderResponseDto;
+import com.minimart.order.entity.Order;
 import com.minimart.order.entity.OrderLineStatus;
 import com.minimart.order.entity.OrderStatus;
 import com.minimart.product.dto.response.ProductResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import static com.minimart.helpers.EmailTemplates.getEmailValues;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -29,6 +39,7 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+    private EmailTemplates emailTemplates;
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     @PostMapping
@@ -96,5 +107,22 @@ public class OrderController {
         return ApiResponse.success(updatedOrder, "Order requested for return successfully");
     }
 
+    @GetMapping("/{id}/report")
+    public ResponseEntity<String> getReport(@PathVariable int id) throws Exception {
+        Order order = orderService.getOrderById(id).orElseThrow(()-> new NoResourceFoundException("No resource found."));
+        Map<String, String> emailValues = getEmailValues(order);
+
+        String htmlContent = emailTemplates.formatTemplate(
+                emailTemplates.ORDER_CREATED_EMAIL_TEMPLATE,
+                emailValues
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_HTML);
+
+        // Return the ResponseEntity with the HTML content
+        return new ResponseEntity<>(htmlContent, headers, HttpStatus.OK);
+        }
 
 }
+
