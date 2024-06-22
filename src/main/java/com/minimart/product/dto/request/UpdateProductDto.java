@@ -29,27 +29,11 @@ public class UpdateProductDto {
     private int stock = 0;
 
     @ValidEnum(enumClass = ProductStatus.class, message = "Please provide a valid status")
-    private String productStatus = ProductStatus.OFFLINE.toString();
+    private String productStatus;
 
     @Positive(message = "Please provide a valid category id")
     private int category_id;
 
     @Positive(message = "Please provide a valid brand id")
     private int brand_id;
-
-    //This should be fetched from JWT instead
-    @Positive(message = "Please provide a valid seller id")
-    private int seller_id;
-
-    @JsonIgnore
-    private Brand brand;
-
-    @JsonIgnore
-    private User seller;
-
-    @JsonIgnore
-    private ProductCategory productCategory;
-
-    @JsonIgnore
-    private ProductStatus status;
 }

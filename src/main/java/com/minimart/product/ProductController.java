@@ -54,6 +54,7 @@ public class ProductController {
         );
     }
 
+//    @PreAuthorize("hasAnyAuthority('SELLER')")
     @GetMapping("/mine")
     private ApiResponse<List<ProductResponseDto>> findSellerProduct(PaginationDto paginationDto, ProductFilterDto productFilterDto, @AuthenticationPrincipal AuthDetails authDetails){
         productFilterDto.setSellerId(authDetails.getId());
@@ -90,8 +91,9 @@ public class ProductController {
 
 //    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PostMapping
-    private ApiResponse<ProductResponseDto> create(@Valid @RequestBody CreateProductDto createDto) throws Exception{
+    private ApiResponse<ProductResponseDto> create(@AuthenticationPrincipal AuthDetails authDetails, @Valid @RequestBody CreateProductDto createDto) throws Exception{
         createDto.setSlug(Utilities.slugify(createDto.getSlug(), "-"));
+        createDto.setSeller_id(authDetails.getId());
         ProductResponseDto newCategory = productService.save(createDto);
         return ApiResponse.success(newCategory, "Product created successfully");
     }
@@ -126,7 +128,7 @@ public class ProductController {
 
 //    @PreAuthorize("hasAnyAuthority('SELLER')")
     @PutMapping("/{id}")
-    private ApiResponse<ProductResponseDto> update(@PathVariable int id,@Valid @RequestBody UpdateProductDto updateDto) throws Exception{
+    private ApiResponse<ProductResponseDto> update(@PathVariable int id, @RequestBody UpdateProductDto updateDto) throws Exception{
         ProductResponseDto newCategory = productService.update(id, updateDto);
         return ApiResponse.success(newCategory, "Product updated successfully");
     }

@@ -1,5 +1,6 @@
 package com.minimart.product;
 
+import com.amazonaws.services.workmail.model.UserRole;
 import com.minimart.brand.BrandRepository;
 import com.minimart.brand.entity.Brand;
 import com.minimart.category.CategoryRepository;
@@ -28,6 +29,7 @@ import com.minimart.role.dto.RoleResponseDto;
 import com.minimart.role.entity.Role;
 import com.minimart.user.dto.response.UserDetailDto;
 import com.minimart.user.entity.User;
+import com.minimart.user.entity.UserStatus;
 import com.minimart.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ProductService implements CommonService<CreateProductDto, UpdateProductDto, ProductResponseDto, Integer> {
@@ -102,6 +105,23 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
     public ProductResponseDto save(CreateProductDto createDto) throws Exception {
         ProductCategory category = categoryRepository.findById(createDto.getCategory_id()).orElseThrow(() -> new NoResourceFoundException("No Category found with provided id"));
         User user = userRepository.findById(createDto.getSeller_id()).orElseThrow(() -> new NoResourceFoundException("No user found with provided id"));
+        if(user.status == UserStatus.PENDING){
+            throw new Exception("You are not allowed to add product until you are approved by administrator");
+        }
+
+        List<Role> userRoles = user.getRoles();
+        boolean isSeller = false;
+        for(Role role : userRoles){
+            if(Objects.equals(role.getSlug(), "SELLER")){
+                isSeller = true;
+                break;
+            }
+        }
+
+        if(!isSeller){
+            throw new Exception("Only seller are allowed to add a product");
+        }
+
         Brand brand = brandRepository.findById(createDto.getBrand_id()).orElseThrow(() -> new NoResourceFoundException("No brand found with provided id"));
         ProductStatus recordType = ProductStatus.valueOf(createDto.getProductStatus());
 
@@ -117,6 +137,42 @@ public class ProductService implements CommonService<CreateProductDto, UpdatePro
     @Override
     public ProductResponseDto update(Integer id, UpdateProductDto updateDto) throws Exception {
         Product existingRecord = productRepository.findById(id).orElseThrow(() -> new NoResourceFoundException("No product found with provided id"));
+        if(updateDto != null){
+            if(updateDto.getBrand_id() != 0){
+                Brand brand = brandRepository.findById(updateDto.getBrand_id()).orElseThrow(() -> new NoResourceFoundException("No brand found with provided id"));
+                existingRecord.setBrand(brand);
+            }
+
+            if(updateDto.getProductStatus() != null){
+                ProductStatus status = ProductStatus.valueOf(updateDto.getProductStatus());
+                existingRecord.setStatus(status);
+            }
+
+            if(updateDto.getCategory_id() != 0){
+                ProductCategory category = categoryRepository.findById(updateDto.getCategory_id()).orElseThrow(() -> new NoResourceFoundException("No Category found with provided id"));
+                existingRecord.setCategory(category);
+            }
+
+            if(updateDto.getSlug() != null){
+                existingRecord.setSlug(updateDto.getSlug());
+            }
+
+            if(updateDto.getTitle() != null){
+                existingRecord.setTitle(updateDto.getTitle());
+            }
+
+            if(updateDto.getDescription() != null){
+                existingRecord.setDescription(updateDto.getDescription());
+            }
+
+            if(updateDto.getPrice() != 0){
+                existingRecord.setPrice(updateDto.getPrice());
+            }
+
+            if(updateDto.getStock() != 0){
+                existingRecord.setStock(updateDto.getStock());
+            }
+        }
         Product updatedRecord = productRepository.save(existingRecord);
         return modelMapper.map(updatedRecord, ProductResponseDto.class);
     }

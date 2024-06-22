@@ -8,7 +8,7 @@ public class ProductFilterDto {
     private int brandId;
     private int categoryId;
     private float maxPrice;
-    private int minPrice;
+    private float minPrice;
     private int sellerId;
     private String status;
 }
