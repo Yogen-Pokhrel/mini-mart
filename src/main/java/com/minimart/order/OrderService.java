@@ -7,6 +7,7 @@ import com.minimart.cart.repository.CartRepository;
 import com.minimart.common.dto.PaginationDto;
 import com.minimart.common.exception.NoResourceFoundException;
 import com.minimart.configuration.Constants;
+import com.minimart.helpers.EmailTemplates;
 import com.minimart.order.dto.request.ChangeOrderLineStatusDto;
 import com.minimart.order.dto.request.ChangeOrderStatusDto;
 import com.minimart.order.dto.response.OrderLineItemResponseDto;
@@ -18,9 +19,7 @@ import com.minimart.order.entity.OrderLineStatus;
 import com.minimart.order.entity.OrderStatus;
 import com.minimart.order.repository.OrderLineItemRepository;
 import com.minimart.order.repository.OrderRepository;
-import com.minimart.product.dto.response.ProductResponseDto;
 import com.minimart.product.entity.Product;
-import com.minimart.product.entity.ProductStatus;
 import com.minimart.product.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -49,8 +50,16 @@ public class OrderService {
 
     @Autowired
     CartItemRepository cartItemRepository;
+
     @Autowired
     MailService mailService;
+
+    @Autowired
+    EmailTemplates emailTemplates;
+
+    public Optional<Order> getOrderById(int id) {
+        return orderRepository.findById(id);
+    }
 
     public OrderResponseDto addOrder(int customerId) throws Exception {
         Cart cart = cartRepository.findByUserId(customerId).orElseThrow(() -> new NoResourceFoundException("No Cart found for the user"));
@@ -92,8 +101,7 @@ public class OrderService {
         cart.setTotalPrice(0);
 
         cartRepository.save(cart);
-
-        mailService.sendEmail(order.getCustomer().getEmail(), "Order Created", "Your order has been "+order.getStatus().name());
+        emailTemplates.sendOrderCreatedEmail(order);
         return modelMapper.map(order, OrderResponseDto.class);
     }
 
